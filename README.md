@@ -2,7 +2,7 @@
 
 AIQ is a modular, data-centric pipeline that detects and resolves content quality issues in knowledge bases **before** they enter the retrieval layer. It works with any RAG system — you improve the data, retrieval improves automatically.
 
-**No LLM required.** Everything works rule-based out of the box. LLM is an optional enhancement.
+**Everything works without LLMs.** LLM is optional but enhances the results.
 
 ## Install
 
@@ -261,7 +261,7 @@ Document(s) --> Phase 1: Intake & Structure (A10-A14)
                   A43: Metrics (recall, safety, risk scores)
 ```
 
-Every module works without LLM. LLM is an optional enhancement that improves quality.
+Everything works without LLMs. LLM is optional but enhances the results.
 
 ## Install Options
 
