@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environment
+.env
+.env.local
+.env.production
+*.key
+*.txt.key
+key_*.txt
+Key_*.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+cache/
+*.pkl
+*.cache
+
+# Credentials (never commit)
+*api_key*
+*secret*
+*token*
+*credential*
