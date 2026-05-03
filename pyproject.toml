@@ -49,10 +49,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/aiq-framework/aiq"
-Documentation = "https://github.com/aiq-framework/aiq#readme"
-Repository = "https://github.com/aiq-framework/aiq"
-Issues = "https://github.com/aiq-framework/aiq/issues"
+Homepage = "https://github.com/neuroloft-ai/aiq"
+Documentation = "https://github.com/neuroloft-ai/aiq#readme"
+Repository = "https://github.com/neuroloft-ai/aiq"
+Issues = "https://github.com/neuroloft-ai/aiq/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
