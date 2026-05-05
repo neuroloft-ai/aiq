@@ -467,6 +467,92 @@ class Pipeline:
             a32_out = a32.run(all_pipeline_chunks, domain_context=domain_ctx)
             result.module_outputs["A32"] = a32_out
 
+        # ── Post-Phase 3: Re-chunk cleaned content ──
+        # After A30/A31/A32 have edited content (rewrites, removals, resolutions),
+        # re-chunk to: remove empties, fix chunk boundaries, add enrichment prefix.
+        if 3 in cfg.phases and all_pipeline_chunks:
+            from aiq.a14 import SmartChunker, A14Config
+
+            # 1. Remove empty chunks (content fully removed by A31)
+            pre_clean_count = len(all_pipeline_chunks)
+            all_pipeline_chunks = [c for c in all_pipeline_chunks if c.words >= 10]
+            removed_empty = pre_clean_count - len(all_pipeline_chunks)
+
+            # 2. Re-chunk: rebuild sections from cleaned chunks, re-run A14
+            from aiq.a13.structurer import Section
+            cleaned_sections = []
+            for chunk in all_pipeline_chunks:
+                cleaned_sections.append(Section(
+                    section_id=chunk.chunk_id,
+                    heading=chunk.heading,
+                    heading_level=2,
+                    content=chunk.content,
+                    words=chunk.words,
+                ))
+
+            a14_config = A14Config(
+                min_words=cfg.chunk_min_words,
+                max_words=cfg.chunk_max_words,
+                topic_shift_threshold=cfg.topic_shift_threshold,
+            )
+            a14_rechunk = SmartChunker(config=a14_config)
+            rechunk_out = a14_rechunk.run(cleaned_sections, source_ref="rechunk")
+
+            # 3. Add enrichment prefix: prepend heading + key topic words to content
+            for chunk in rechunk_out.chunks:
+                if chunk.heading and not chunk.content.startswith(chunk.heading):
+                    # Extract top topic keywords from content
+                    import re as _re
+                    topic_words = _re.findall(r'\b[a-z]{4,}\b', chunk.content.lower())
+                    _enrich_stop = {
+                        "the", "and", "for", "with", "from", "this", "that",
+                        "are", "was", "has", "have", "will", "can", "our",
+                        "your", "all", "also", "not", "been", "may", "must",
+                    }
+                    from collections import Counter as _Counter
+                    freq = _Counter(w for w in topic_words if w not in _enrich_stop)
+                    top_keywords = [w for w, _ in freq.most_common(5)]
+                    keyword_str = ", ".join(top_keywords) if top_keywords else ""
+
+                    prefix = chunk.heading
+                    if keyword_str:
+                        prefix += f". {keyword_str}."
+                    else:
+                        prefix += "."
+
+                    chunk.content = f"{prefix} {chunk.content}"
+                    chunk.words = len(chunk.content.split())
+
+            # Restore source metadata from original chunks
+            orig_meta = {}
+            for c in all_pipeline_chunks:
+                orig_meta[c.chunk_id] = {
+                    "source_page_id": c.source_page_id,
+                    "source_page_title": c.source_page_title,
+                    "metadata": dict(c.metadata),
+                }
+
+            # Apply metadata to rechunked chunks (use first original chunk's metadata)
+            if orig_meta:
+                first_meta = list(orig_meta.values())[0]
+                for chunk in rechunk_out.chunks:
+                    chunk.source_page_id = first_meta.get("source_page_id", "")
+                    chunk.source_page_title = first_meta.get("source_page_title", "")
+
+            all_pipeline_chunks = rechunk_out.chunks
+
+            result.module_outputs["A14_rechunk"] = ModuleOutput(
+                module_id="A14_rechunk", module_name="Re-chunk (post-clean)",
+                detected=removed_empty,
+                resolved=removed_empty,
+                remaining=0,
+                data={
+                    "chunks_before_clean": pre_clean_count,
+                    "empty_removed": removed_empty,
+                    "chunks_after_rechunk": len(all_pipeline_chunks),
+                },
+            )
+
         # ── Build result ──
         result.raw_chunks = all_raw_chunks
         result.chunks = all_pipeline_chunks

@@ -665,18 +665,82 @@ Return ONLY the JSON array."""
 
 
 def _remove_flagged_sentences(content: str, findings: list) -> str:
-    """Remove sentences containing flagged evidence from content."""
+    """Remove sentences containing flagged evidence from content.
+
+    Splits content into sentences, checks each against finding evidence,
+    keeps only clean sentences.
+    """
     sentences = re.split(r'(?<=[.!?])\s+', content)
-    flagged_evidence = {f.evidence[:50].lower() for f in findings if f.evidence}
+    flagged_evidence = set()
+    for f in findings:
+        if f.evidence:
+            # Use first 50 chars of evidence for matching
+            flagged_evidence.add(f.evidence[:50].lower())
+            # Also match on the specific pattern that triggered detection
+            if f.reason:
+                # Extract quoted text from reason like: 'Internal marker found: "INTERNAL NOTE"'
+                quoted = re.findall(r'"([^"]+)"', f.reason)
+                for q in quoted:
+                    flagged_evidence.add(q.lower())
 
     clean = []
     for sent in sentences:
-        sent_lower = sent[:50].lower()
-        is_flagged = any(ev in sent_lower or sent_lower in ev for ev in flagged_evidence)
+        sent_lower = sent.lower()
+        is_flagged = False
+        for ev in flagged_evidence:
+            if ev in sent_lower or sent_lower[:50] in ev:
+                is_flagged = True
+                break
         if not is_flagged:
             clean.append(sent)
 
     return " ".join(clean)
+
+
+def _remove_inline_patterns(content: str, findings: list) -> str:
+    """Remove specific inline patterns (tracked changes, comments, draft markers, strikethrough).
+
+    Unlike sentence removal, this surgically removes just the pattern
+    while keeping surrounding content intact.
+    """
+    new_content = content
+
+    for f in findings:
+        if f.detector == "editorial_tracked_change":
+            # Remove [TRACKED CHANGE ...] markers
+            new_content = re.sub(r'\[TRACKED CHANGE[^\]]*\]\.?\s*', '', new_content)
+        elif f.detector == "editorial_html_comment":
+            # Remove HTML comments
+            new_content = re.sub(r'<!--.*?-->\s*', '', new_content, flags=re.DOTALL)
+        elif f.detector == "editorial_draft_marker":
+            # Remove "DRAFT v3 - Last edited by..." sentences
+            new_content = re.sub(
+                r'DRAFT\s+v?\d[^.]*\.?\s*', '', new_content, flags=re.IGNORECASE)
+        elif f.detector == "editorial_revision_note":
+            # Remove "Last edited by..." / "Previous version by..."
+            new_content = re.sub(
+                r'(?:Last edited|Previous version|Edited)\s+by\s+[^.]*\.?\s*', '',
+                new_content, flags=re.IGNORECASE)
+        elif f.detector == "editorial_strikethrough":
+            # Remove ~~strikethrough~~ text
+            new_content = re.sub(r'~~[^~]+~~\.?\s*', '', new_content)
+        elif f.detector in ("metadata_jira_id", "metadata_sprint_ref"):
+            # Remove JIRA-XXXX and Sprint references from surrounding sentence
+            pass  # handled by sentence-level removal
+        elif f.detector in ("metadata_internal_url", "metadata_admin_url", "metadata_debug_url"):
+            # Remove internal/admin URLs
+            new_content = re.sub(
+                r'https?://(?:[\w-]+\.)?(?:internal|admin|debug|staging)\.[\w./-]*\s*', '',
+                new_content)
+        elif f.detector == "metadata_slack_channel":
+            # Remove Slack channel references
+            new_content = re.sub(r'#[a-z][\w-]*(?:-\d{4}-\d{2}(?:-\d{2})?)?\s*', '',
+                                 new_content, flags=re.IGNORECASE)
+        elif f.detector == "metadata_vpn_resource":
+            # Remove VPN-only resource references
+            new_content = re.sub(r'\(VPN\s+required\)\s*', '', new_content, flags=re.IGNORECASE)
+
+    return new_content
 
 
 def _llm_remediate_chunk(chunk, findings: list, domain_type: str,
@@ -732,26 +796,34 @@ Start directly with the first sentence of the cleaned content."""
 
 
 class Classifier:
-    """A31 — Content Governance: decide what is safe to serve."""
+    """A31 — Content Governance: detect and remove unsafe content from chunks.
+
+    Operates as a data cleaning module: flagged sentences are removed from
+    chunk content, not just tagged. Clean content remains. If an entire chunk
+    is flagged, it is marked as empty for removal during re-chunking.
+    """
 
     def __init__(self, config: Optional[A31Config] = None):
         self.config = config or A31Config()
 
     def run(self, chunks: list[Chunk],
             domain_context: Optional[DomainContext] = None) -> ModuleOutput:
-        """Classify all chunks by scanning for tag-worthy patterns.
+        """Detect governance issues and remove flagged content from chunks.
 
         Args:
-            chunks: from A14 (enriched by A21/A22)
-            domain_context: from A21 (for destructive patterns)
+            chunks: from A14 (enriched by A22)
+            domain_context: from A11 (for destructive patterns)
 
         Returns:
-            ModuleOutput with findings and tagged chunks
+            ModuleOutput with findings and cleaned chunks.
+            Chunks with all content removed are tagged as EMPTY for downstream removal.
         """
         t0 = time.perf_counter()
         words_in = sum(c.words for c in chunks)
         all_findings: list[ClassificationFinding] = []
-        tagged_count = 0
+        cleaned_count = 0
+        removed_count = 0
+        words_removed = 0
 
         domain_destructive = []
         if domain_context:
@@ -792,34 +864,93 @@ class Classifier:
 
             all_findings.extend(chunk_findings)
 
-            # Assign tag: most severe finding wins
-            if chunk_findings:
-                best = min(chunk_findings, key=lambda f: _TAG_PRIORITY.get(f.tag, 99))
-                chunk.tag = best.tag
-                chunk.tag_reason = best.reason
-                chunk.tag_module = "A31"
-                tagged_count += 1
+            if not chunk_findings:
+                continue
 
-                # Track as "removed" tokens (content classified, not served to users)
-                if best.tag.default_behavior == "block":
-                    chunk.token_changes.append(TokenChange(
-                        change_type="removed",
-                        reason=f"tagged_{best.tag.value}",
-                        token_count=chunk.words,
-                        module="A31",
-                        detail=best.reason[:60],
-                    ))
+            # ── Remove flagged content from chunk ──
+            # Separate auto-block findings (must remove) from review findings (flag only)
+            block_findings = [f for f in chunk_findings
+                              if _TAG_PRIORITY.get(f.tag, 99) <= 5]  # PII through placeholder
+            review_findings = [f for f in chunk_findings
+                               if _TAG_PRIORITY.get(f.tag, 99) > 5]  # vague, destructive, broken_ref, escalation
+
+            original_content = chunk.content
+            new_content = chunk.content
+
+            if block_findings:
+                # Check for section-level markers that invalidate the ENTIRE chunk
+                # "FOR INTERNAL USE ONLY" / "INTERNAL NOTE" means everything in
+                # this chunk is internal — remove all content, not just the marker
+                has_section_internal = any(
+                    f.tag == ChunkTag.INTERNAL_ONLY and
+                    any(m in f.evidence.upper() for m in
+                        ("FOR INTERNAL USE ONLY", "INTERNAL NOTE", "CONFIDENTIAL",
+                         "NOT FOR PUBLICATION", "DO NOT SHARE"))
+                    for f in block_findings
+                )
+
+                if has_section_internal:
+                    # Entire chunk is internal — clear all content
+                    new_content = ""
+                else:
+                    # Remove sentences that contain block-level findings
+                    new_content = _remove_flagged_sentences(new_content, block_findings)
+                    # Also try to remove specific patterns inline
+                    new_content = _remove_inline_patterns(new_content, block_findings)
+
+            # Clean up whitespace
+            new_content = re.sub(r'\s{2,}', ' ', new_content).strip()
+            new_content = re.sub(r'\.\s*\.', '.', new_content)
+
+            if new_content != original_content:
+                words_before = len(original_content.split())
+
+                if len(new_content.split()) < 10:
+                    # Chunk is mostly flagged content — mark as empty for removal
+                    chunk.content = ""
+                    chunk.words = 0
+                    chunk.tag = ChunkTag.CONTENT  # will be filtered by empty check
+                    chunk.tag_reason = "All content removed by A31 governance cleaning"
+                    chunk.tag_module = "A31"
+                    removed_count += 1
+                    words_removed += words_before
+                else:
+                    # Chunk has clean content remaining
+                    chunk.content = new_content
+                    chunk.words = len(new_content.split())
+                    chunk.tag = ChunkTag.CONTENT
+                    chunk.tag_reason = ""
+                    chunk.tag_module = ""
+                    cleaned_count += 1
+                    words_removed += words_before - chunk.words
+
+                chunk.token_changes.append(TokenChange(
+                    change_type="removed",
+                    reason="governance_cleaning",
+                    token_count=words_before - chunk.words,
+                    module="A31",
+                    detail=f"Removed {len(block_findings)} flagged items",
+                ))
+
+            # For review-level findings: tag the chunk but don't remove content
+            if review_findings and not block_findings:
+                best_review = min(review_findings, key=lambda f: _TAG_PRIORITY.get(f.tag, 99))
+                chunk.tag = best_review.tag
+                chunk.tag_reason = best_review.reason
+                chunk.tag_module = "A31"
 
         detected = len(all_findings)
+        resolved = cleaned_count + removed_count
+        words_out = sum(c.words for c in chunks)
 
         return ModuleOutput(
             module_id="A31",
             module_name="Content Governance",
             detected=detected,
-            resolved=tagged_count,
-            remaining=0,
+            resolved=resolved,
+            remaining=detected - resolved,
             words_in=words_in,
-            words_out=words_in,  # content unchanged, only tags added
+            words_out=words_out,
             findings=all_findings,
             chunks=chunks,
             elapsed_seconds=time.perf_counter() - t0,

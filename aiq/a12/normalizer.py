@@ -84,6 +84,7 @@ class Extraction:
     tokens_added: int       # approximate tokens added
     confidence: str = "high"  # "high" (good extraction), "low" (gap/inferred), "llm" (LLM generated)
     is_gap: bool = False    # True if no meaningful content could be extracted
+    row_texts: list = field(default_factory=list)  # per-row text for tables (enables row-level chunking)
 
 
 # =====================================================================
@@ -132,10 +133,15 @@ def _table_rows_to_text(headers: list[str], rows: list[list[str]]) -> str:
 
 
 def _extract_table_rule(headers: list[str], rows: list[list[str]],
-                        heading: str, table_type: str) -> tuple[str, str]:
-    """Rule-based table extraction. Returns (summary, content).
+                        heading: str, table_type: str) -> tuple[str, str, list[str]]:
+    """Rule-based table extraction. Returns (summary, content, row_texts).
 
-    Adds a description line before the data based on table type.
+    Each row is linearized as a self-contained sentence with the table
+    heading prepended, so downstream chunking can split at row boundaries
+    without losing context.
+
+    row_texts: individual row strings for row-level HTML output.
+    content: full text (all rows joined) for backward compatibility.
     """
     # Summary
     if headers and heading:
@@ -158,8 +164,11 @@ def _extract_table_rule(headers: list[str], rows: list[list[str]],
     else:
         desc = f"{heading or 'Table'} ({n_rows} rows):"
 
-    # Content — one sentence per row
-    content_lines = [desc]
+    # Identify the primary key column (first column, used as row identifier)
+    primary_header = headers[0] if headers else ""
+
+    # Content — one self-contained sentence per row, heading prepended
+    row_texts = []
     for row in rows:
         if headers:
             parts = []
@@ -168,13 +177,22 @@ def _extract_table_rule(headers: list[str], rows: list[list[str]],
                 if v and v.lower() not in ('', '-', 'n/a', 'none'):
                     parts.append(f"{h}: {v}" if h else v)
             if parts:
-                content_lines.append(". ".join(parts) + ".")
+                # Prepend table heading + primary key value for self-contained retrieval
+                primary_val = row[0] if row else ""
+                if heading and primary_val:
+                    row_text = f"{heading} — {primary_val}: " + ". ".join(parts[1:]) + "."
+                elif heading:
+                    row_text = f"{heading}: " + ". ".join(parts) + "."
+                else:
+                    row_text = ". ".join(parts) + "."
+                row_texts.append(row_text)
         else:
             line = ", ".join(c for c in row if c)
             if line:
-                content_lines.append(line + ".")
+                row_texts.append(f"{heading}: {line}." if heading else f"{line}.")
 
-    return summary, "\n".join(content_lines)
+    content = desc + "\n" + "\n".join(row_texts)
+    return summary, content, row_texts
 
 
 def _build_table_prompt(headers: list[str], rows: list[list[str]],
@@ -251,6 +269,7 @@ def _extract_tables(html: str, mode: str = "rule_only",
             and table_type in ("comparison", "log")
         )
 
+        row_texts = []  # individual row strings for row-level HTML
         if use_llm:
             # LLM for comparison/log tables
             context_before = _get_context_window(html, match.start(), "before", 200)
@@ -263,15 +282,17 @@ def _extract_tables(html: str, mode: str = "rule_only",
                     summary = heading or f"Table {idx}"
                     content = llm_content.strip()
                     confidence = "llm"
+                    # LLM output is prose — split into paragraphs for row_texts
+                    row_texts = [p.strip() for p in content.split("\n") if p.strip()]
                 else:
-                    summary, content = _extract_table_rule(headers, rows, heading, table_type)
+                    summary, content, row_texts = _extract_table_rule(headers, rows, heading, table_type)
                     confidence = "high"
             except Exception:
-                summary, content = _extract_table_rule(headers, rows, heading, table_type)
+                summary, content, row_texts = _extract_table_rule(headers, rows, heading, table_type)
                 confidence = "high"
         else:
             # Rule-based for lookup/data tables (and all tables in local mode)
-            summary, content = _extract_table_rule(headers, rows, heading, table_type)
+            summary, content, row_texts = _extract_table_rule(headers, rows, heading, table_type)
             confidence = "high"
 
         full_text = f"[Summary] {summary}.\n[Content] {content}"
@@ -287,6 +308,7 @@ def _extract_tables(html: str, mode: str = "rule_only",
             original_html=table_html,
             tokens_added=tokens_added,
             confidence=confidence,
+            row_texts=row_texts,
         )))
 
     return results
@@ -744,10 +766,23 @@ class Normalizer:
         table_results = _extract_tables(
             html, self.config.mode, self.config.llm_call, self.config.domain_type)
         for original_html, extraction in table_results:
-            replacement = (
-                f'\n<p class="aiq-extracted" data-source="{extraction.element_id}">'
-                f'{extraction.summary}. {extraction.content}</p>\n'
-            )
+            # Row-level HTML: each row is a separate <p> for chunking boundaries
+            if extraction.row_texts:
+                row_paragraphs = "\n".join(
+                    f'<p class="aiq-table-row">{row}</p>'
+                    for row in extraction.row_texts
+                )
+                replacement = (
+                    f'\n<div class="aiq-table" data-source="{extraction.element_id}" '
+                    f'data-heading="{extraction.summary}">\n'
+                    f'<p class="aiq-table-summary">{extraction.summary}.</p>\n'
+                    f'{row_paragraphs}\n</div>\n'
+                )
+            else:
+                replacement = (
+                    f'\n<p class="aiq-extracted" data-source="{extraction.element_id}">'
+                    f'{extraction.summary}. {extraction.content}</p>\n'
+                )
             normalized = normalized.replace(original_html, replacement, 1)
             all_extractions.append(extraction)
             token_changes.append(TokenChange(

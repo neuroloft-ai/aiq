@@ -93,6 +93,9 @@ class A32Config:
     # LLM judge (optional)
     use_llm_judge: bool = False
     llm_call: Optional[callable] = None
+    # Resolution
+    auto_resolve_threshold: float = 0.7  # auto-remove loser above this confidence
+    priority_authors: list = field(default_factory=list)  # these authors' content wins ties
 
 
 # =====================================================================
@@ -113,9 +116,12 @@ class ConsistencyFinding:
     suggestion_reason: str  # "chunk_b is newer (March 2026 vs January 2022)"
 
     confidence: str = "high"   # "high" | "medium" | "low" — from LLM validation
+    confidence_score: float = 0.0  # numeric 0.0-1.0 for threshold-based resolution
+    signals: list = field(default_factory=list)  # list of signal dicts used for scoring
 
-    # User decision (set later)
+    # Resolution status
     user_decision: str = "pending"  # pending, select_a, select_b, keep_both
+    action_taken: str = ""  # "auto_resolved", "flagged_for_review", "discarded_fp"
 
 
 # =====================================================================
@@ -133,52 +139,60 @@ def _build_candidate_pairs(chunks: list[Chunk], config: A32Config,
                            domain_context: Optional[DomainContext] = None) -> list[tuple[int, int]]:
     """Build list of chunk index pairs worth comparing.
 
-    Pairs included if:
-      - Adjacent (within max_adjacency_distance)
-      - Share heading keywords
-      - Share domain anchor topic
+    Uses topic grouping to avoid O(n²) full comparison:
+      1. Group chunks by heading keywords + content topic words
+      2. Only compare chunks within the same topic group
+      3. Also include adjacent pairs (within max_adjacency_distance)
+
+    This gives O(n × g) where g = max group size, instead of O(n²).
     """
     pairs = set()
     n = len(chunks)
 
-    # Get domain anchors for topic overlap
-    anchor_words = set()
-    if domain_context:
-        for anchor, variants in domain_context.domain_anchors.items():
-            anchor_words.update(variants)
+    # Skip empty/placeholder/editorial chunks
+    active = [i for i in range(n)
+              if chunks[i].words > 0 and chunks[i].tag.value not in ("placeholder", "editorial")]
 
-    for i in range(n):
-        # Skip tagged chunks that shouldn't participate in consistency
-        if chunks[i].tag.value in ("placeholder", "editorial"):
-            continue
+    # Build topic groups: heading keywords + top content keywords
+    _content_stop = {
+        "the", "and", "for", "with", "from", "this", "that", "are", "was",
+        "has", "have", "will", "can", "our", "your", "all", "also", "not",
+        "been", "may", "must", "should", "each", "per", "any", "more",
+    }
 
-        keywords_i = _heading_keywords(chunks[i].heading)
+    def _topic_keys(chunk):
+        """Extract topic keys for grouping."""
+        keys = _heading_keywords(chunk.heading)
+        # Add top 5 content words (4+ chars, not stop words)
+        words = re.findall(r'\b[a-z]{4,}\b', chunk.content.lower())
+        freq = Counter(words)
+        for w in _content_stop:
+            freq.pop(w, None)
+        keys.update(w for w, _ in freq.most_common(5))
+        return keys
 
-        for j in range(i + 1, n):
-            if chunks[j].tag.value in ("placeholder", "editorial"):
-                continue
+    chunk_topics = {i: _topic_keys(chunks[i]) for i in active}
 
-            # Adjacency
-            if j - i <= config.max_adjacency_distance:
-                pairs.add((i, j))
-                continue
+    # Group by shared topic keys — inverted index
+    topic_to_chunks: dict[str, list[int]] = {}
+    for i in active:
+        for key in chunk_topics[i]:
+            topic_to_chunks.setdefault(key, []).append(i)
 
-            # Heading overlap
-            keywords_j = _heading_keywords(chunks[j].heading)
-            if len(keywords_i & keywords_j) >= config.min_heading_overlap:
-                pairs.add((i, j))
-                continue
+    # Build pairs from topic groups (only within groups)
+    for key, members in topic_to_chunks.items():
+        if len(members) < 2 or len(members) > 20:
+            continue  # skip singleton groups and overly broad groups
+        for mi in range(len(members)):
+            for mj in range(mi + 1, len(members)):
+                pairs.add((members[mi], members[mj]) if members[mi] < members[mj]
+                          else (members[mj], members[mi]))
 
-            # Domain anchor topic overlap
-            if anchor_words:
-                content_i = chunks[i].content.lower()
-                content_j = chunks[j].content.lower()
-                shared_anchors = sum(
-                    1 for a in anchor_words
-                    if a in content_i and a in content_j
-                )
-                if shared_anchors >= 2:
-                    pairs.add((i, j))
+    # Also include adjacent pairs
+    for idx in range(len(active) - 1):
+        i, j = active[idx], active[idx + 1]
+        if j - i <= config.max_adjacency_distance:
+            pairs.add((i, j))
 
     return sorted(pairs)
 
@@ -463,6 +477,147 @@ def _find_sentence_with(text: str, token: str, token2: str = "") -> str:
 
 
 # =====================================================================
+# Confidence scoring
+# =====================================================================
+
+def _compute_confidence_score(finding: ConsistencyFinding,
+                               chunk_a: Chunk, chunk_b: Chunk,
+                               config: A32Config) -> float:
+    """Compute a numeric confidence score (0.0-1.0) from available signals.
+
+    Higher = more confident that this is a real contradiction with a clear winner.
+    Signals:
+      - Freshness: date-based winner adds 0.3
+      - Context overlap quality: strong overlap adds 0.2
+      - Priority author: adds 0.2
+      - LLM validation: adds 0.3 (if available)
+    """
+    score = 0.0
+    signals = []
+
+    # Signal 1: Freshness (date-based winner)
+    winner, reason = _suggest_winner_by_date(finding, chunk_a, chunk_b)
+    if winner:
+        score += 0.3
+        signals.append({"signal": "freshness", "value": 0.3, "detail": reason})
+        finding.suggested_winner = winner
+        finding.suggestion_reason = reason
+
+    # Signal 2: Context overlap quality
+    # Higher overlap = more likely about the same topic = more likely real contradiction
+    if finding.conflict_type == "numeric":
+        facts_a = _extract_numeric_facts(chunk_a.content)
+        facts_b = _extract_numeric_facts(chunk_b.content)
+        if facts_a and facts_b:
+            # Check how many context words overlap
+            best_overlap = 0
+            for _, _, ctx_a in facts_a:
+                for _, _, ctx_b in facts_b:
+                    ctx_a_words = set(ctx_a.split())
+                    ctx_b_words = set(ctx_b.split())
+                    overlap = len(ctx_a_words & ctx_b_words)
+                    best_overlap = max(best_overlap, overlap)
+            if best_overlap >= 3:
+                score += 0.2
+                signals.append({"signal": "context_overlap", "value": 0.2,
+                                "detail": f"{best_overlap} shared context words"})
+            elif best_overlap >= 2:
+                score += 0.1
+                signals.append({"signal": "context_overlap", "value": 0.1,
+                                "detail": f"{best_overlap} shared context words"})
+
+    # Signal 3: Priority author
+    if config.priority_authors:
+        author_a = chunk_a.metadata.get("author", "")
+        author_b = chunk_b.metadata.get("author", "")
+        if author_a in config.priority_authors and author_b not in config.priority_authors:
+            if not finding.suggested_winner:
+                finding.suggested_winner = "a"
+                finding.suggestion_reason = f"Priority author: {author_a}"
+            score += 0.2
+            signals.append({"signal": "priority_author", "value": 0.2,
+                            "detail": f"Author '{author_a}' is priority"})
+        elif author_b in config.priority_authors and author_a not in config.priority_authors:
+            if not finding.suggested_winner:
+                finding.suggested_winner = "b"
+                finding.suggestion_reason = f"Priority author: {author_b}"
+            score += 0.2
+            signals.append({"signal": "priority_author", "value": 0.2,
+                            "detail": f"Author '{author_b}' is priority"})
+
+    # Signal 4: Heading specificity — dedicated section > casual mention
+    heading_a_words = len(_heading_keywords(chunk_a.heading))
+    heading_b_words = len(_heading_keywords(chunk_b.heading))
+    if heading_a_words > heading_b_words + 1 and not finding.suggested_winner:
+        finding.suggested_winner = "a"
+        finding.suggestion_reason = "More specific section heading"
+        score += 0.1
+        signals.append({"signal": "heading_specificity", "value": 0.1,
+                        "detail": f"Heading A more specific ({heading_a_words} vs {heading_b_words} keywords)"})
+    elif heading_b_words > heading_a_words + 1 and not finding.suggested_winner:
+        finding.suggested_winner = "b"
+        finding.suggestion_reason = "More specific section heading"
+        score += 0.1
+        signals.append({"signal": "heading_specificity", "value": 0.1,
+                        "detail": f"Heading B more specific ({heading_b_words} vs {heading_a_words} keywords)"})
+
+    finding.confidence_score = min(1.0, score)
+    finding.signals = signals
+
+    # Map to string confidence
+    if score >= 0.7:
+        finding.confidence = "high"
+    elif score >= 0.4:
+        finding.confidence = "medium"
+    else:
+        finding.confidence = "low"
+
+    return score
+
+
+def _resolve_contradiction(finding: ConsistencyFinding,
+                            chunk_map: dict[str, Chunk],
+                            threshold: float) -> bool:
+    """Auto-resolve a contradiction by removing the losing content.
+
+    Returns True if resolved, False if flagged for review.
+    """
+    if finding.confidence_score < threshold or not finding.suggested_winner:
+        finding.action_taken = "flagged_for_review"
+        return False
+
+    # Determine loser
+    loser_id = finding.chunk_b_id if finding.suggested_winner == "a" else finding.chunk_a_id
+    loser_evidence = finding.evidence_b if finding.suggested_winner == "a" else finding.evidence_a
+    loser_chunk = chunk_map.get(loser_id)
+
+    if not loser_chunk:
+        return False
+
+    # Remove the losing evidence from the chunk content
+    # Try to remove the specific sentence containing the contradicting fact
+    sentences = re.split(r'(?<=[.!?])\s+', loser_chunk.content)
+    loser_lower = loser_evidence[:60].lower()
+    clean_sentences = []
+    removed = False
+    for sent in sentences:
+        if not removed and loser_lower in sent.lower():
+            removed = True  # remove this sentence
+            continue
+        clean_sentences.append(sent)
+
+    if removed and clean_sentences:
+        loser_chunk.content = " ".join(clean_sentences)
+        loser_chunk.words = len(loser_chunk.content.split())
+        finding.action_taken = "auto_resolved"
+        finding.user_decision = f"select_{finding.suggested_winner}"
+        return True
+
+    finding.action_taken = "flagged_for_review"
+    return False
+
+
+# =====================================================================
 # Main checker
 # =====================================================================
 
@@ -585,36 +740,50 @@ Return ONLY the JSON array."""
 
 
 class ConsistencyChecker:
-    """A32 — Find contradictions between chunks."""
+    """A32 — Find and resolve contradictions between chunks.
+
+    Detects contradictions, scores confidence from multiple signals,
+    and auto-resolves (removes losing content) when confidence exceeds threshold.
+    Low-confidence findings are flagged for user review with a recommended winner.
+    """
 
     def __init__(self, config: Optional[A32Config] = None):
         self.config = config or A32Config()
 
     def run(self, chunks: list[Chunk],
             domain_context: Optional[DomainContext] = None) -> ModuleOutput:
-        """Find contradictions across all chunk pairs.
+        """Find and resolve contradictions across chunks.
+
+        Pipeline:
+          1. Build candidate pairs (topic-grouped, not full O(n²))
+          2. Run detectors on each pair
+          3. Score confidence from signals (freshness, context, author, LLM)
+          4. Auto-resolve above threshold (remove losing content from chunk)
+          5. Flag below threshold for user review (with recommendation)
 
         Args:
-            chunks: from A14 (enriched by A21/A22, classified by A31)
-            domain_context: from A21
+            chunks: from A14 (enriched by A22)
+            domain_context: from A11
 
         Returns:
-            ModuleOutput with consistency findings
+            ModuleOutput with findings. Chunks are modified in-place:
+            auto-resolved findings have the losing content removed.
         """
         t0 = time.perf_counter()
         words_in = sum(c.words for c in chunks)
 
-        # Layer A: candidate pairs
+        # Layer A: candidate pairs (topic-grouped for scale)
         pairs = _build_candidate_pairs(chunks, self.config, domain_context)
 
         # Pre-compute scope for each chunk
         chunk_scope = {c.chunk_id: _extract_chunk_scope(c, domain_context) for c in chunks}
+        chunk_map = {c.chunk_id: c for c in chunks}
 
         findings: list[ConsistencyFinding] = []
 
-        # Within-chunk authority conflicts (same chunk mentions multiple actors with same responsibility)
+        # Within-chunk authority conflicts
         for chunk in chunks:
-            if chunk.tag.value in ("placeholder", "editorial"):
+            if chunk.words == 0 or chunk.tag.value in ("placeholder", "editorial"):
                 continue
             internal_finding = _detect_authority_within_chunk(chunk, domain_context)
             if internal_finding:
@@ -624,58 +793,71 @@ class ConsistencyChecker:
         for i, j in pairs:
             chunk_a = chunks[i]
             chunk_b = chunks[j]
+
+            # Skip empty chunks (cleaned by A31)
+            if chunk_a.words == 0 or chunk_b.words == 0:
+                continue
+
             scope_a = chunk_scope.get(chunk_a.chunk_id, {})
             scope_b = chunk_scope.get(chunk_b.chunk_id, {})
 
             # Numeric conflict
             finding = _detect_numeric_conflict(chunk_a, chunk_b, scope_a, scope_b)
             if finding:
-                winner, reason = _suggest_winner_by_date(finding, chunk_a, chunk_b)
-                finding.suggested_winner = winner
-                finding.suggestion_reason = reason
                 findings.append(finding)
-                continue  # one finding per pair is enough
+                continue
 
             # Authority conflict
             finding = _detect_authority_conflict(chunk_a, chunk_b, domain_context)
             if finding:
-                winner, reason = _suggest_winner_by_date(finding, chunk_a, chunk_b)
-                finding.suggested_winner = winner
-                finding.suggestion_reason = reason
                 findings.append(finding)
                 continue
 
             # Process conflict
             finding = _detect_process_conflict(chunk_a, chunk_b)
             if finding:
-                winner, reason = _suggest_winner_by_date(finding, chunk_a, chunk_b)
-                finding.suggested_winner = winner
-                finding.suggestion_reason = reason
                 findings.append(finding)
                 continue
 
-        # Layer C: LLM judge (optional, not implemented in rule-based version)
-        # LLM validation — confirm/reject, suggest winner, set confidence
+        # Layer C: LLM validation (optional — reduces FPs, improves winner selection)
         if self.config.llm_call and findings:
             findings = _llm_validate_contradictions(
                 findings, chunks, self.config.llm_call,
                 domain_context.domain_type if domain_context else "general")
 
+        # Score confidence and auto-resolve
+        resolved = 0
+        for finding in findings:
+            chunk_a = chunk_map.get(finding.chunk_a_id)
+            chunk_b = chunk_map.get(finding.chunk_b_id)
+            if not chunk_a or not chunk_b:
+                continue
+
+            # Compute confidence score from all signals
+            _compute_confidence_score(finding, chunk_a, chunk_b, self.config)
+
+            # Auto-resolve if above threshold
+            if _resolve_contradiction(finding, chunk_map, self.config.auto_resolve_threshold):
+                resolved += 1
+
         detected = len(findings)
+        words_out = sum(c.words for c in chunks)
 
         return ModuleOutput(
             module_id="A32",
             module_name="Consistency",
             detected=detected,
-            resolved=0,  # resolved count comes from user decisions later
-            remaining=detected,
+            resolved=resolved,
+            remaining=detected - resolved,
             words_in=words_in,
-            words_out=words_in,
+            words_out=words_out,
             findings=findings,
             elapsed_seconds=time.perf_counter() - t0,
             data={
                 "pairs_evaluated": len(pairs),
                 "total_chunks": len(chunks),
+                "auto_resolved": resolved,
+                "flagged_for_review": detected - resolved,
             },
         )
 

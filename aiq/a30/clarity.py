@@ -79,10 +79,10 @@ class A30Config:
       rule_fix:    auto-fix using DomainContext
       llm_fix:     LLM rewrites
     """
-    pronoun_mode: str = "detect_only"
-    acronym_mode: str = "rule_fix"      # rule_fix works well here (A21 has expansions)
-    vague_entity_mode: str = "detect_only"
-    reference_mode: str = "detect_only"
+    pronoun_mode: str = "rule_fix"       # rule_fix resolves pronouns using DomainContext actors
+    acronym_mode: str = "rule_fix"       # rule_fix expands using A11 acronym dictionary
+    vague_entity_mode: str = "rule_fix"  # rule_fix replaces "the team"/"the platform" using DomainContext
+    reference_mode: str = "rule_fix"     # rule_fix removes dangling references
     procedure_mode: str = "detect_only"
     sentence_mode: str = "detect_only"
     sequence_mode: str = "detect_only"
@@ -475,45 +475,142 @@ def _fix_acronyms_rule(content: str, findings: list[ClarityFinding],
 
 def _fix_pronouns_rule(content: str, findings: list[ClarityFinding],
                        heading: str, domain_context: Optional[DomainContext]) -> tuple[str, list[ClarityFinding], int]:
-    """Resolve pronouns using heading context. Returns (new_content, updated_findings, tokens_added)."""
-    # Try to infer the subject from the heading
+    """Resolve pronouns using heading and DomainContext. Returns (new_content, updated_findings, tokens_added).
+
+    Handles:
+      - Sentence-start "They/Them" → "{actor} team"
+      - Mid-sentence "they/them/their" → "{actor} team"/"the {actor} team's"
+      - "contact them" / "reach out to them" → "contact the {actor} team"
+    """
+    # Infer subject from heading + domain context
     subject = ""
-    if heading:
-        # Use the heading as the likely subject
+    if domain_context and domain_context.actors and heading:
         heading_lower = heading.lower()
-        if domain_context and domain_context.actors:
-            for actor in domain_context.actors:
-                if actor in heading_lower:
-                    subject = f"the {actor} team"
-                    break
-        if not subject and domain_context and domain_context.product_names:
-            for product in domain_context.product_names:
-                if product.lower() in heading_lower:
-                    subject = product
-                    break
-        if not subject:
-            subject = heading
+        for actor in domain_context.actors:
+            if actor in heading_lower:
+                subject = f"the {actor} team"
+                break
+
+    if not subject and domain_context and domain_context.company_name:
+        # Fallback: use company name + "support team" for support domain
+        if domain_context.domain_type == "support":
+            subject = f"the {domain_context.company_name} support team"
+        else:
+            subject = f"the {domain_context.company_name} team"
 
     if not subject:
         return content, findings, 0
 
-    # Only fix "They" at sentence start (safest rule-based fix)
+    new_content = content
+    tokens_added = 0
+
+    # Fix "contact them" / "reach out to them" / "escalate to them" patterns
+    contact_re = re.compile(
+        r'\b(contact|reach out to|escalate to|notify)\s+them\b',
+        re.IGNORECASE,
+    )
+    for m in contact_re.finditer(new_content):
+        old = m.group()
+        verb = m.group(1)
+        new = f"{verb} {subject}"
+        new_content = new_content[:m.start()] + new + new_content[m.end():]
+        tokens_added += len(subject.split()) - 1
+        # Mark matching finding as fixed
+        for f in findings:
+            if f.issue_type == "pronoun" and "them" in f.original_term.lower() and not f.fixed:
+                f.fixed = True
+                f.fix_detail = f'Replaced "{old}" with "{new}"'
+                break
+        break  # re-do finditer after content change
+
+    # Fix sentence-start "They" → subject
+    they_re = re.compile(r'(?:^|(?<=[.!?]\s))They\s', re.MULTILINE)
+    m = they_re.search(new_content)
+    if m:
+        old = m.group()
+        new = old.replace("They", subject.capitalize() if m.start() == 0 else subject, 1)
+        new_content = new_content[:m.start()] + new + new_content[m.end():]
+        tokens_added += len(subject.split()) - 1
+        for f in findings:
+            if f.issue_type == "pronoun" and "they" in f.original_term.lower() and not f.fixed:
+                f.fixed = True
+                f.fix_detail = f'Replaced "They" with "{subject}"'
+                break
+
+    # Fix mid-sentence "they handle" / "they will" / "they can" patterns
+    mid_they_re = re.compile(r'\b(they)\s+(handle|will|can|also|manage|process|review)\b', re.IGNORECASE)
+    m = mid_they_re.search(new_content)
+    if m:
+        old_pronoun = m.group(1)
+        new_content = new_content[:m.start()] + subject + new_content[m.start() + len(old_pronoun):]
+        tokens_added += len(subject.split()) - 1
+        for f in findings:
+            if f.issue_type == "pronoun" and not f.fixed:
+                f.fixed = True
+                f.fix_detail = f'Replaced "{old_pronoun}" with "{subject}"'
+                break
+
+    return new_content, findings, tokens_added
+
+
+def _fix_vague_entities_rule(content: str, findings: list[ClarityFinding],
+                             domain_context: Optional[DomainContext]) -> tuple[str, list[ClarityFinding], int]:
+    """Replace vague entity references using DomainContext. Returns (new_content, updated_findings, tokens_added)."""
+    if not domain_context:
+        return content, findings, 0
+
     new_content = content
     tokens_added = 0
 
     for finding in findings:
-        if finding.issue_type != "pronoun":
+        if finding.issue_type != "vague_entity" or not finding.proposed_fix or not finding.confident:
             continue
-        # Only fix sentence-start "They"
-        match = re.search(r'(?:^|[.!?]\s+)They\s', new_content, re.MULTILINE)
-        if match:
-            old = match.group()
-            new = old.replace("They", subject, 1)
-            new_content = new_content[:match.start()] + new + new_content[match.end():]
-            tokens_added += len(subject.split()) - 1
+
+        original = finding.original_term  # e.g., "the team", "the platform"
+        replacement = finding.proposed_fix  # e.g., "Neuroloft", "the billing team"
+
+        # Replace first occurrence
+        idx = new_content.lower().find(original.lower())
+        if idx >= 0:
+            actual = new_content[idx:idx + len(original)]
+            new_content = new_content[:idx] + replacement + new_content[idx + len(original):]
+            tokens_added += len(replacement.split()) - len(original.split())
             finding.fixed = True
-            finding.fix_detail = f'Replaced "They" with "{subject}"'
-            break  # Only fix first occurrence to be safe
+            finding.fix_detail = f'Replaced "{actual}" with "{replacement}"'
+
+    return new_content, findings, tokens_added
+
+
+def _fix_references_rule(content: str, findings: list[ClarityFinding]) -> tuple[str, list[ClarityFinding], int]:
+    """Remove or rewrite dangling cross-references. Returns (new_content, updated_findings, tokens_added)."""
+    new_content = content
+    tokens_added = 0
+
+    for finding in findings:
+        if finding.issue_type != "reference":
+            continue
+        if not finding.proposed_fix or not finding.confident:
+            continue
+
+        original = finding.original_term  # the original sentence
+        replacement = finding.proposed_fix  # the rewritten sentence
+
+        if replacement.startswith("(remove"):
+            # Remove the sentence entirely
+            new_content = new_content.replace(original, "", 1)
+            tokens_added -= len(original.split())
+            finding.fixed = True
+            finding.fix_detail = "Removed dangling reference sentence"
+        else:
+            # Replace with rewritten version
+            new_content = new_content.replace(original, replacement, 1)
+            tokens_added += len(replacement.split()) - len(original.split())
+            finding.fixed = True
+            finding.fix_detail = f"Rewrote to remove dangling reference"
+
+    # Clean up double spaces and orphaned periods
+    new_content = re.sub(r'\s{2,}', ' ', new_content).strip()
+    new_content = re.sub(r'\.\s*\.', '.', new_content)
 
     return new_content, findings, tokens_added
 
@@ -737,20 +834,32 @@ class ClarityChecker:
             chunk_findings.extend(_detect_complex_sentences(
                 content, chunk.chunk_id, self.config.max_sentence_words))
 
-            # Apply fixes based on mode
+            # Apply fixes based on mode — always rewrite content
             new_content = content
             tokens_added = 0
 
-            # Fix acronyms
-            if self.config.acronym_mode == "rule_fix" and domain_context:
+            # Fix acronyms (expand in content)
+            if self.config.acronym_mode in ("rule_fix", "llm_fix") and domain_context:
                 new_content, chunk_findings, ta = _fix_acronyms_rule(
                     new_content, chunk_findings, domain_context)
                 tokens_added += ta
 
-            # Fix pronouns
-            if self.config.pronoun_mode == "rule_fix":
+            # Fix pronouns (resolve in content)
+            if self.config.pronoun_mode in ("rule_fix", "llm_fix"):
                 new_content, chunk_findings, ta = _fix_pronouns_rule(
                     new_content, chunk_findings, chunk.heading, domain_context)
+                tokens_added += ta
+
+            # Fix vague entities (replace in content)
+            if self.config.vague_entity_mode in ("rule_fix", "llm_fix"):
+                new_content, chunk_findings, ta = _fix_vague_entities_rule(
+                    new_content, chunk_findings, domain_context)
+                tokens_added += ta
+
+            # Fix dangling references (rewrite/remove in content)
+            if self.config.reference_mode in ("rule_fix", "llm_fix"):
+                new_content, chunk_findings, ta = _fix_references_rule(
+                    new_content, chunk_findings)
                 tokens_added += ta
 
             # LLM smart prompts — two focused calls per chunk
@@ -772,6 +881,27 @@ class ClarityChecker:
                     _llm_rewrite_sentences(
                         rewrite_findings, chunk.heading,
                         domain_context, self.config.llm_call)
+
+                # Apply LLM proposals back to content
+                for f in chunk_findings:
+                    if f.fixed or not f.proposed_fix or not f.confident:
+                        continue
+                    if f.issue_type in ("pronoun", "vague_entity") and f.original_term and f.proposed_fix:
+                        # Replace the original term with the LLM's resolved entity
+                        idx = new_content.lower().find(f.original_term.lower())
+                        if idx >= 0:
+                            actual = new_content[idx:idx + len(f.original_term)]
+                            new_content = new_content[:idx] + f.proposed_fix + new_content[idx + len(f.original_term):]
+                            tokens_added += len(f.proposed_fix.split()) - len(f.original_term.split())
+                            f.fixed = True
+                            f.fix_detail = f'LLM resolved: "{actual}" → "{f.proposed_fix}"'
+                    elif f.issue_type in ("reference", "sentence") and f.original_term and f.proposed_fix:
+                        # Replace the original sentence with the LLM's rewrite
+                        if f.original_term in new_content:
+                            new_content = new_content.replace(f.original_term, f.proposed_fix, 1)
+                            tokens_added += len(f.proposed_fix.split()) - len(f.original_term.split())
+                            f.fixed = True
+                            f.fix_detail = f'LLM rewrote sentence'
 
             # Update chunk if content changed
             if new_content != content:
