@@ -1,0 +1,1072 @@
+{
+  "timestamp": "2026-05-05T23:26:13.938027",
+  "input_file": "neuroloft_kb.html",
+  "config": {
+    "pii_mode": "smart",
+    "chunk_min_words": 50,
+    "chunk_max_words": 200,
+    "use_llm": false
+  },
+  "stats": {
+    "baseline_chunks": 11,
+    "baseline_words": 1868,
+    "final_chunks": 24,
+    "final_words": 2110
+  },
+  "modules": {
+    "Domain Intelligence": {
+      "detected": 171,
+      "resolved": 171,
+      "remaining": 0
+    },
+    "Content Normalization": {
+      "detected": 15,
+      "resolved": 15,
+      "remaining": 0
+    },
+    "Structure & Headings": {
+      "detected": 1,
+      "resolved": 1,
+      "remaining": 0
+    },
+    "Metadata Enrichment": {
+      "detected": 7,
+      "resolved": 7,
+      "remaining": 0
+    },
+    "Semantic Clarity": {
+      "detected": 28,
+      "resolved": 19,
+      "remaining": 9
+    },
+    "Content Governance": {
+      "detected": 49,
+      "resolved": 8,
+      "remaining": 0
+    },
+    "Consistency": {
+      "detected": 2,
+      "resolved": 0,
+      "remaining": 2
+    }
+  },
+  "baseline_chunks": [
+    {
+      "chunk_id": "raw_1",
+      "heading": "",
+      "content": "\u0000SPLIT\u0000 Neuroloft handles all billing inquiries for customers across North America and Europe. Payments are processed through our system and customers can reach out to the support team if they experience any issues. They will review the case and take appropriate action. The billing department works with multiple vendors to ensure timely processing of all transactions. If there are any issues with a payment they should contact us immediately. Our team is available during business hours and they handle everything from refunds to payment disputes. The platform supports credit cards, wire transfers and digital wallets. For urgent matters reach out to them directly. All disputes must be submitted within 60 days. Refunds are typically processed within 10 business days from the date of the approved request. Make sure to have your account number ready when you call. The team also manages subscription renewals and cancellations. Submit your request via CRM and it will be routed to the appropriate team. Check the SLA for response time commitments. The PM needs to approve any exceptions to the standard refund policy. To request a refund follow these steps:",
+      "words": 185
+    },
+    {
+      "chunk_id": "raw_2",
+      "heading": "",
+      "content": "Log into your account. Go to Billing &gt; Transaction History. Click \"Request Refund\" on the relevant transaction. INTERNAL NOTE: The refund approval threshold was raised to $500 in Q3. Do not share this with customers. Agents should use their discretion for amounts between $200-$500. Refunds are processed within 10 business days after approval. For amounts over $1,000 additional verification may be required. Contact the finance team for large refund requests. Neuroloft currently supports the following payment methods: Credit Card (Visa, Mastercard, Amex). Wire Transfer. PayPal. Digital Wallets (Apple Pay, Google Pay). Method Processing Time Fees Status . Credit Card Instant 2.9% + $0.30 Active . Wire Transfer 3-5 business days $25 flat fee Active . PayPal 24 hours 3.5% Active . Check 10-15 business days None Deprecated - use wire instead . Bitcoin Varies 1% Pilot (Q2 2022) . For enterprise customers we also support purchase orders and net-30 terms. Wire transfers must include the reference code from your invoice. Our payment gateway was last updated in January 2022 and runs on version 3.2 of the processing engine. For any issues with payment processing contact support.",
+      "words": 186
+    },
+    {
+      "chunk_id": "raw_3",
+      "heading": "",
+      "content": "International payments require additional documentation. Customers must provide a valid tax ID and proof of address. For payments in currencies other than USD or EUR a conversion fee of 2.5% applies. Enterprise customers may negotiate custom rates with their account manager. All payment disputes must be filed within 60 days of the transaction date. Bank First National Bank . Account 7281930456 . Routing 021000021 . Reference Your invoice number . SWIFT See diagram below . For payment issues contact the team. They can help resolve any problems with transactions. If the issue is not resolved within 48 hours escalate to management. The diagram below shows how payments are processed through our system: [Figure 1: Payment Processing Flow] . As shown in the diagram above, all transactions pass through the validation gateway before reaching the payment processor. Refer to Figure 2 for the refund workflow. [Figure 2: Refund Workflow] .",
+      "words": 149
+    },
+    {
+      "chunk_id": "raw_4",
+      "heading": "",
+      "content": "As shown in Figure 2, the refund workflow has two paths based on the refund amount: (1) Customer submits a refund request via the support portal. (2) A support agent reviews the request within 24 hours. (3) If the refund amount exceeds $100, the request is escalated to a manager for approval. If the amount is $100 or less, the refund is auto-approved. (4) If approved, the refund is processed and credited to the original payment method. If denied, the customer is notified with the denial reason. Account Setup and Configuration. To set up a new account: Visit neuroloft.com/signup. Enter your company details. Choose your subscription plan. After signup you will receive a confirmation email. Click the link to activate your account. Your account manager will be assigned within 24 hours. TODO: Add information about SSO configuration and enterprise onboarding process. For existing customers who need to update their billing information: Go to Settings &gt; Billing. Update your payment method. Save changes. Changes take effect on your next billing cycle. For immediate changes contact support. Feature Starter ($29/mo) Professional ($79/mo) Enterprise (Custom) .",
+      "words": 183
+    },
+    {
+      "chunk_id": "raw_5",
+      "heading": "",
+      "content": "Users Up to 5 Up to 25 Unlimited . Storage 10 GB 100 GB Unlimited . Support Email only Email + Chat Dedicated CSM . SLA None 99.5% 99.9% . API Access No Yes Yes + Custom . All plans include basic support. Professional and Enterprise include priority support with guaranteed response times. See our FAQ page for complete plan comparisons and feature lists. If a payment fails check the following: Verify your card has not expired. Ensure sufficient funds are available. Check that your billing address matches the card. Try a different browser or clear your cache. If none of these work contact them and provide your transaction ID. Our system automatically handles most edge cases and retry scenarios. The platform will attempt to recharge failed payments up to 3 times over a period of 7 days. For enterprise customers using purchase orders: if your PO is rejected verify that the amount matches the quote exactly. Any discrepancy will cause automatic rejection. Contact your account manager or escalate to the appropriate team for resolution. TBD - Add section about payment webhooks and API integration for developers. Code Meaning Resolution .",
+      "words": 191
+    },
+    {
+      "chunk_id": "raw_6",
+      "heading": "",
+      "content": "ERR-001 Card declined Contact card issuer . ERR-002 Insufficient funds Add funds and retry . ERR-003 Invalid CVV Re-enter card details . ERR-004 Expired card Update payment method . ERR-005 System error Contact them . Customers who are unsatisfied with their service can request a full refund within 30 days of purchase. To get a refund: Contact our support team via email at support@neuroloft.com. Provide your order number and reason for the refund. Wait for confirmation. Refunds are credited back to the original payment method. Processing time is 10 business days . For annual subscriptions a pro-rated refund will be calculated based on the remaining months. The chart below shows our payment processing volume trends: [Figure 3: Monthly Revenue Chart] . As shown in Figure 3, transaction volume has increased 40% year over year. The spike in Q4 is due to seasonal promotions. [Figure 5: Account Tier Comparison Chart - image not available] . As shown in Figure 5, the three account tiers (Starter, Professional, Enterprise) differ in storage limits, API rate limits, and support response times. Enterprise customers get dedicated account managers and 24/7 phone support.",
+      "words": 187
+    },
+    {
+      "chunk_id": "raw_7",
+      "heading": "",
+      "content": "All new customer accounts receive a free trial period of 14 days starting from the date of signup. During the trial, customers have full access to Starter plan features and can cancel at any time without charge. For enterprise customers, the free trial may take up to 30 days to fully provision, depending on the complexity of the integration and the number of user accounts being configured. Enterprise trials include access to the dedicated customer success manager throughout the onboarding. When a standard refund request is disputed or requires additional review, support handles all refund escalations and coordinates with the customer to resolve the issue. Support agents maintain a case log for every escalation and track resolution time. As part of month-end close, finance generates the required reporting for the audit trail and reconciles disputed transactions with the payment gateway. Finance coordinates with the support team on escalation outcomes but does not manage escalations directly. Pricing Update (January 2022). Effective January 15, 2022 , the following pricing changes apply to all new customers: Starter plan: $19/month (reduced from $25). Professional plan: $59/month (reduced from $69). Enterprise: contact sales for custom pricing.",
+      "words": 191
+    },
+    {
+      "chunk_id": "raw_8",
+      "heading": "",
+      "content": "These prices are locked in for customers who signed up before March 2022. Existing customers on legacy plans will be migrated automatically. Pricing Update (April 2026). As of April 1, 2026 , Neuroloft pricing has been updated: Starter plan: $29/month (includes 5 users, 10 GB). Professional plan: $79/month (includes 25 users, 100 GB). Enterprise: custom pricing based on usage. All existing customers will transition to the new pricing at their next renewal date. Contact your account manager for migration details. Support Availability (Updated February 2023). As of February 2023 , our support team operates on the following schedule: Monday to Friday: 9 AM - 6 PM EST. Saturday: 10 AM - 2 PM EST (email only). Sunday: Closed. For urgent issues outside business hours, contact the on-call team via PagerDuty. Response time for critical issues is 30 minutes. Below are examples of recently resolved billing cases for training purposes: Case Customer Issue Resolution . CASE-4521 Sarah Johnson (sarah.johnson@acmecorp.com, +1-555-0142) Double charged for March subscription Refunded $79 . CASE-4533 Michael Chen (m.chen@techstart.io, +1-555-0198) Card declined after bank change Updated payment method . CASE-4547 Lisa Rodriguez (lisa.r@globalinc.com, +1-555-0267) Enterprise invoice discrepancy Issued credit note for $1,250 .",
+      "words": 195
+    },
+    {
+      "chunk_id": "raw_9",
+      "heading": "",
+      "content": "For privacy compliance, customer information in support cases should be handled according to our data retention policy. Contact the DPO at dpo@neuroloft.com for questions. The following billing policies are effective for all customers: Invoices are generated on the 1st of each month. Payment is due within 15 days of invoice date. [TRACKED CHANGE - Dave 03/15: Changed from 30 days to 15 days per finance request] . Late payments incur a 1.5% monthly fee. DRAFT v3 - Last edited by Dave Thompson on March 15, 2026. Previous version by Sarah Kim. Pending legal review. Customers on annual plans receive a 10% discount. ~~Monthly plans no longer receive loyalty discounts.~~ Contact billing@neuroloft.com for plan change requests. The following known issues may affect payment processing: Intermittent gateway timeout — Payment gateway occasionally returns HTTP 504 during peak hours. Tracked in JIRA-7823 . Engineering ETA: Sprint 47. Workaround: retry after 30 seconds. Duplicate charge on plan upgrade — When customers upgrade mid-cycle, the system may create a duplicate charge. Fix deployed in build neuroloft-billing-v4.2.1-rc3 . Monitor via https://grafana.internal.neuroloft.com/d/billing-errors . PayPal reconciliation delay — PayPal settlements may take 48h instead of 24h. Root cause: upstream API change. Slack thread: #billing-ops-2026-03-12 .",
+      "words": 197
+    },
+    {
+      "chunk_id": "raw_10",
+      "heading": "",
+      "content": "For internal issue tracking see https://jira.internal.neuroloft.com/browse/PAY (VPN required). Dashboard: https://admin.neuroloft.com/billing/debug?mode=verbose . When a customer files a payment dispute, the following process is followed: [Figure 4: Dispute Resolution Workflow] . As shown in Figure 4, the dispute resolution process has 5 stages: (1) Customer files dispute via support portal or email, (2) Support agent reviews within 4 hours and assigns priority level, (3) If amount exceeds $500, case is escalated to the finance team for review, (4) Resolution is proposed to the customer within 48 hours, (5) If customer accepts, refund or credit is processed within 3 business days. If the customer rejects the resolution, the case moves to arbitration. The average dispute resolution time is 5.2 business days. In Q1 2026, 94% of disputes were resolved without arbitration. FOR INTERNAL USE ONLY — Do not share with customers . When escalating billing issues, use the following contacts: Level Contact Phone Email . L1 - Support Lead Jennifer Park +1-555-0301 ext 401 j.park@neuroloft.com . L2 - Finance Manager Robert Williams +1-555-0301 ext 502 r.williams@neuroloft.com . L3 - VP Operations Amanda Foster +1-555-0301 ext 700 a.foster@neuroloft.com .",
+      "words": 185
+    },
+    {
+      "chunk_id": "raw_11",
+      "heading": "",
+      "content": "L3 escalation requires director approval. Use Slack channel #escalations-billing for real-time coordination. Never share direct phone numbers with customers.",
+      "words": 19
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_id": "c1",
+      "heading": "Billing inquiries",
+      "content": "Billing inquiries. billing, customers, team, neuroloft, handles. Neuroloft handles all billing inquiries for customers across North America and Europe. Payments are processed through our system and customers can reach out to the support team if they experience any issues. the billing team will review the case and take appropriate action. The billing department works with multiple vendors to ensure timely processing of all transactions.",
+      "words": 64
+    },
+    {
+      "chunk_id": "c2",
+      "heading": "Billing inquiries",
+      "content": "Billing inquiries. team, payment, business, billing, refunds. If there are any issues with a payment they should contact us immediately. Our team is available during business hours and the billing team handle everything from refunds to payment disputes. Enterprise supports credit cards, wire transfers and digital wallets. For urgent matters reach out to the billing team directly. All disputes must be submitted within 60 days. Refunds are typically processed within 10 business days from the date of the approved request.",
+      "words": 80
+    },
+    {
+      "chunk_id": "c3",
+      "heading": "Billing inquiries",
+      "content": "Billing inquiries. team, make, sure, account, number. Make sure to have your account number ready when you call. The team also manages subscription renewals and cancellations. Submit your request via CRM (Customer Relationship Management) and it will be routed to the appropriate team. Check the SLA (Service Level Agreement) for response time commitments. The PM needs to approve any exceptions to the standard refund policy.",
+      "words": 65
+    },
+    {
+      "chunk_id": "c4",
+      "heading": "Payment Methods",
+      "content": "Payment Methods. processing, payment, times, time, fees. Neuroloft currently supports the following payment methods: Credit Card (Visa, Mastercard, Amex). Wire Transfer. PayPal. Digital Wallets (Apple Pay, Google Pay). Payment Processing Times: method, processing time, fees, status. Payment Processing Times — Credit Card: Processing Time: Instant. Fees: 2.9% + $0.30. Status: Active. Payment Processing Times — Wire Transfer: Processing Time: 3-5 business days. Fees: $25 flat fee. Status: Active. Payment Processing Times — PayPal: Processing Time: 24 hours. Fees: 3.5%. Status: Active.",
+      "words": 81
+    },
+    {
+      "chunk_id": "c5",
+      "heading": "Payment Processing Times",
+      "content": "Payment Processing Times — Check: Processing Time: 10-15 business days. Status: Deprecated - use wire instead. Payment Processing Times — Bitcoin: Processing Time: Varies. Fees: 1%. Status: Pilot (Q2 2022). For enterprise customers we also support purchase orders and net-30 terms. Wire transfers must include the reference code from your invoice. Our payment gateway was last updated in January 2022 and runs on version 3.2 of the processing engine. For any issues with payment processing contact support. International payments require additional documentation. Customers must provide a valid tax ID and proof of address. For payments in currencies other than USD or EUR a conversion fee of 2.5% applies. Enterprise customers may negotiate custom rates with their account manager. All payment disputes must be filed within 60 days of the transaction date.",
+      "words": 131
+    },
+    {
+      "chunk_id": "c6",
+      "heading": "Wire Transfer Details",
+      "content": "Wire Transfer Details: field, value. Wire Transfer Details — Bank: Value: First National Bank. Wire Transfer Details — Routing: Value: 021000021. Wire Transfer Details — Reference: Value: Your invoice number. Wire Transfer Details — SWIFT (Society for Worldwide Interbank Financial Telecommunication): Value: See diagram below. For payment issues contact the team. the Enterprise support team can help resolve any problems with transactions. If the issue is not resolved within 48 hours escalate to management.",
+      "words": 74
+    },
+    {
+      "chunk_id": "c7",
+      "heading": "Payment Flow Overview - 1",
+      "content": "Payment Flow Overview - 1. diagram, through, payment, shown, above. The diagram below shows how payments are processed through our system: Figure 1: Payment Processing Flow. As shown in the diagram above, all transactions pass through the validation gateway before reaching the payment processor. As shown in the diagram above, all transactions pass through the validation gateway before reaching the payment processor.",
+      "words": 62
+    },
+    {
+      "chunk_id": "c8",
+      "heading": "Payment Flow Overview",
+      "content": "Payment Flow Overview. refund, figure, workflow, amount, request. Refer to Figure 2 for the refund workflow. Figure 2: Refund Workflow. As shown in Figure 2, the refund workflow has two paths based on the refund amount: (1) Customer submits a refund request via the support portal. As shown in Figure 2, the refund workflow has two paths based on the refund amount: (1) Customer submits a refund request via the support portal. (2) A support agent reviews the request within 24 hours. (3) If the refund amount exceeds $100, the request is escalated to a manager for approval. If the amount is $100 or less, the refund is auto-approved. (4) If approved, the refund is processed and credited to the original payment method. If denied, the customer is notified with the denial reason.",
+      "words": 133
+    },
+    {
+      "chunk_id": "c9",
+      "heading": "Account Setup and Configuration",
+      "content": "Account Setup and Configuration. step, account, billing, changes, procedure. To set up a new account: 3-step procedure for account setup and configuration. Step 1: Visit neuroloft.com/signup. Step 2: Enter your company details. Step 3: Choose your subscription plan. After signup you will receive a confirmation email. Click the link to activate your account. Your account manager will be assigned within 24 hours. For existing customers who need to update their billing information: 3-step procedure for account setup and configuration. Step 1: Go to Settings &gt; Billing. Step 2: Update your payment method. Step 3: Save changes. Changes take effect on your next billing cycle. For immediate changes contact support.",
+      "words": 109
+    },
+    {
+      "chunk_id": "c10",
+      "heading": "Plan Comparison",
+      "content": "Plan Comparison: feature, starter ($29/mo), professional ($79/mo), enterprise (custom). Plan Comparison — Users: Starter ($29/mo): Up to 5. Professional ($79/mo): Up to 25. Enterprise (Custom): Unlimited. Plan Comparison — Storage: Starter ($29/mo): 10 GB. Professional ($79/mo): 100 GB. Enterprise (Custom): Unlimited. Plan Comparison — Support: Starter ($29/mo): Email only. Professional ($79/mo): Email + Chat. Enterprise (Custom): Dedicated CSM (Customer Success Manager). Plan Comparison — SLA (Service Level Agreement): Professional ($79/mo): 99.5%. Enterprise (Custom): 99.9%. Plan Comparison — API Access: Starter ($29/mo): No. Professional ($79/mo): Yes. Enterprise (Custom): Yes + Custom. All plans include basic support. Professional and Enterprise include priority support with guaranteed response times. See our FAQ page for complete plan comparisons and feature lists.",
+      "words": 116
+    },
+    {
+      "chunk_id": "c11",
+      "heading": "Troubleshooting Payment Issues",
+      "content": "Troubleshooting Payment Issues. enterprise, check, verify, card, matches. If a payment fails check the following: Verify your card has not expired. Ensure sufficient funds are available. Check that your billing address matches the card. Try a different browser or clear your cache. If none of these work contact the Enterprise support team and provide your transaction ID. Our system automatically handles most edge cases and retry scenarios. Enterprise will attempt to recharge failed payments up to 3 times over a period of 7 days. For enterprise customers using purchase orders: if your PO (Purchase Order) is rejected verify that the amount matches the quote exactly. Any discrepancy will cause automatic rejection. Contact your account manager or escalate to the appropriate team for resolution.",
+      "words": 123
+    },
+    {
+      "chunk_id": "c12",
+      "heading": "Common Error Codes",
+      "content": "Common Error Codes: code, meaning, resolution. Common Error Codes — ERR-001: Meaning: Card declined. Resolution: Contact card issuer. Common Error Codes — ERR-002: Meaning: Insufficient funds. Resolution: Add funds and retry. Common Error Codes — ERR-003: Meaning: Invalid CVV (Card Verification Value). Resolution: Re-enter card details. Common Error Codes — ERR-004: Meaning: Expired card. Resolution: Update payment method. Common Error Codes — ERR-005: Meaning: System error. Resolution: Contact the Enterprise support team.",
+      "words": 72
+    },
+    {
+      "chunk_id": "c13",
+      "heading": "Getting a Refund",
+      "content": "Getting a Refund. refund, step, days, support, customers. Customers who are unsatisfied with their service can request a full refund within 30 days of purchase. To get a refund: 3-step procedure for getting a refund. Step 1: Contact our support team via email at support@neuroloft.com. Step 2: Provide your order number and reason for the refund. Step 3: Wait for confirmation. Refunds are credited back to the original payment method. Processing time is 10 business days . For annual subscriptions a pro-rated refund will be calculated based on the remaining months.",
+      "words": 91
+    },
+    {
+      "chunk_id": "c14",
+      "heading": "Monthly Revenue Report",
+      "content": "Monthly Revenue Report. figure, chart, volume, account, shown. The chart below shows our payment processing volume trends: Figure 3: Monthly Revenue Chart. [Figure 5: Account Tier Comparison Chart - image not available] As shown in Figure 5, the three account tiers (Starter, Professional, Enterprise) differ in storage limits, API rate limits, and support response times. As shown in Figure 3, transaction volume has increased 40% year over year. The spike in Q4 is due to seasonal promotions.",
+      "words": 77
+    },
+    {
+      "chunk_id": "c15",
+      "heading": "Monthly Revenue Report - 3",
+      "content": "Monthly Revenue Report - 3. account, limits, figure, enterprise, support. Figure 5: Account Tier Comparison Chart - image not available. As shown in Figure 5, the three account tiers (Starter, Professional, Enterprise) differ in storage limits, API rate limits, and support response times. (Note: original image not available.). As shown in Figure 5, the three account tiers (Starter, Professional, Enterprise) differ in storage limits, API rate limits, and support response times. Enterprise customers get dedicated account managers and 24/7 phone support.",
+      "words": 81
+    },
+    {
+      "chunk_id": "c16",
+      "heading": "Free Trial Policy",
+      "content": "Free Trial Policy. trial, customer, accounts, free, days. All new customer accounts receive a free trial period of 14 days starting from the date of signup. During the trial, customers have full access to Starter plan features and can cancel at any time without charge. For enterprise customers, the free trial may take up to 30 days to fully provision, depending on the complexity of the integration and the number of user accounts being configured. Enterprise trials include access to the dedicated customer success manager throughout the onboarding.",
+      "words": 88
+    },
+    {
+      "chunk_id": "c17",
+      "heading": "Refund Escalations",
+      "content": "Refund Escalations. support, refund, disputed, escalations, coordinates. When a standard refund request is disputed or requires additional review, support handles all refund escalations and coordinates with the customer to resolve the issue. Support agents maintain a case log for every escalation and track resolution time. As part of month-end close, finance generates the required reporting for the audit trail and reconciles disputed transactions with the payment gateway. Finance coordinates with the support team on escalation outcomes but does not manage escalations directly.",
+      "words": 82
+    },
+    {
+      "chunk_id": "c18",
+      "heading": "Pricing Update (January 2022)",
+      "content": "Pricing Update (January 2022). customers, pricing, plan, month, reduced. Effective January 15, 2022 , the following pricing changes apply to all new customers: Starter plan: $19/month (reduced from $25). Professional plan: $59/month (reduced from $69). Enterprise: contact sales for custom pricing. These prices are locked in for customers who signed up before March 2022. Existing customers on legacy plans will be migrated automatically.",
+      "words": 63
+    },
+    {
+      "chunk_id": "c19",
+      "heading": "Pricing Update (April 2026)",
+      "content": "Pricing Update (April 2026). pricing, plan, month, includes, users. As of April 1, 2026 , Neuroloft pricing has been updated: Starter plan: $29/month (includes 5 users, 10 GB). Professional plan: $79/month (includes 25 users, 100 GB). Enterprise: custom pricing based on usage. All existing customers will transition to the new pricing at their next renewal date. Contact your account manager for migration details.",
+      "words": 63
+    },
+    {
+      "chunk_id": "c20",
+      "heading": "Support Availability (Updated February 2023)",
+      "content": "Support Availability (Updated February 2023). team, issues, february, support, operates. As of February 2023 , our support team operates on the following schedule: Monday to Friday: 9 AM - 6 PM EST. Saturday: 10 AM - 2 PM EST (email only). Sunday: Closed. For urgent issues outside business hours, contact the on-call team via PagerDuty. Response time for critical issues is 30 minutes.",
+      "words": 63
+    },
+    {
+      "chunk_id": "c21",
+      "heading": "Recent Support Cases",
+      "content": "Recent Support Cases. issue, resolution, cases, support, customer. Below are examples of recently resolved billing cases for training purposes: Recent Support Cases: case, customer, issue, resolution. Issue: Double charged for March subscription. Resolution: Refunded $79. Issue: Card declined after bank change. Resolution: Updated payment method. Issue: Enterprise invoice discrepancy. Resolution: Issued credit note for $1,250. For privacy compliance, customer information in support cases should be handled according to our data retention policy. Contact the DPO (Data Protection Officer) at dpo@neuroloft.com for questions.",
+      "words": 82
+    },
+    {
+      "chunk_id": "c22",
+      "heading": "Billing Policy Updates",
+      "content": "Billing Policy Updates. customers, following, billing, policies, effective. The following billing policies are effective for all customers: Invoices are generated on the 1st of each month. Payment is due within 15 days of invoice date. Late payments incur a 1.5% monthly fee. Customers on annual plans receive a 10% discount.",
+      "words": 50
+    },
+    {
+      "chunk_id": "c23",
+      "heading": "Known Payment Issues",
+      "content": "Known Payment Issues. payment, gateway, duplicate, charge, upgrade. The following known issues may affect payment processing: Intermittent gateway timeout — Payment gateway occasionally returns HTTP 504 during peak hours. Workaround: retry after 30 seconds. Duplicate charge on plan upgrade — When customers upgrade mid-cycle, Enterprise may create a duplicate charge. PayPal reconciliation delay — PayPal settlements may take 48h instead of 24h. Root cause: upstream API change.",
+      "words": 67
+    },
+    {
+      "chunk_id": "c24",
+      "heading": "Dispute Resolution Process",
+      "content": "Dispute Resolution Process. customer, dispute, resolution, within, support. When a customer files a payment dispute, the following process is followed: Figure 4: Dispute Resolution Workflow. As shown in Figure 4, the dispute resolution process has 5 stages: (1) Customer files dispute via support portal or email, (2) Support agent reviews within 4 hours and assigns priority level, (3) If amount exceeds $500, case is escalated to the finance team for review, (4) Resolution is proposed to the customer within 48 hours, (5) If customer accepts, refund or credit is processed within 3 business days. As shown in Figure 4, the dispute resolution process has 5 stages: (1) Customer files dispute via support portal or email, (2) Support agent reviews within 4 hours and assigns priority level, (3) If amount exceeds $500, case is escalated to the finance team for review, (4) Resolution is proposed to the customer within 48 hours, (5) If customer accepts, refund or credit is processed within 3 business days. If the customer rejects the resolution, the case moves to arbitration. The average dispute resolution time is 5.2 business days. In Q1 2026, 94% of disputes were resolved without arbitration.",
+      "words": 193
+    }
+  ],
+  "findings": {
+    "a30": [
+      {
+        "chunk_id": "c1",
+        "confident": true,
+        "evidence": "Payments are processed through our system and customers can reach out to the support team if they experience any issues. They will review the case and",
+        "fix_detail": "Replaced \"They\" with \"the billing team\"",
+        "fixed": true,
+        "issue_type": "pronoun",
+        "original_term": "They",
+        "proposal_source": "heading \"Billing inquiries\" mentions \"billing\"",
+        "proposed_fix": "the billing team",
+        "reason": "Ambiguous pronoun \"They\" — who/what does it refer to?"
+      },
+      {
+        "chunk_id": "c2",
+        "confident": true,
+        "evidence": "If there are any issues with a payment they should contact us immediately.",
+        "fix_detail": "Replaced \"they\" with \"the billing team\"",
+        "fixed": true,
+        "issue_type": "pronoun",
+        "original_term": "they",
+        "proposal_source": "heading \"Billing inquiries\" mentions \"billing\"",
+        "proposed_fix": "the billing team",
+        "reason": "Ambiguous pronoun \"they\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c2",
+        "confident": true,
+        "evidence": "For urgent matters reach out to them directly.",
+        "fix_detail": "Replaced \"reach out to them\" with \"reach out to the billing team\"",
+        "fixed": true,
+        "issue_type": "pronoun",
+        "original_term": "them",
+        "proposal_source": "heading \"Billing inquiries\" mentions \"billing\"",
+        "proposed_fix": "the billing team",
+        "reason": "Ambiguous pronoun \"them\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c2",
+        "confident": true,
+        "evidence": "The platform supports credit cards, wire transfers and digital wallets.",
+        "fix_detail": "Replaced \"The platform\" with \"Enterprise\"",
+        "fixed": true,
+        "issue_type": "vague_entity",
+        "original_term": "The platform",
+        "proposal_source": "A11: company name is Enterprise",
+        "proposed_fix": "Enterprise",
+        "reason": "Vague reference \"The platform\" — which platform?"
+      },
+      {
+        "chunk_id": "c3",
+        "confident": true,
+        "evidence": "Submit your request via CRM and it will be routed to the appropriate team.",
+        "fix_detail": "Expanded to: CRM (Customer Relationship Management)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "CRM",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "CRM (Customer Relationship Management)",
+        "reason": "Acronym \"CRM\" not expanded (known: Customer Relationship Management)"
+      },
+      {
+        "chunk_id": "c3",
+        "confident": true,
+        "evidence": "Check the SLA for response time commitments.",
+        "fix_detail": "Expanded to: SLA (Service Level Agreement)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "SLA",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "SLA (Service Level Agreement)",
+        "reason": "Acronym \"SLA\" not expanded (known: Service Level Agreement)"
+      },
+      {
+        "chunk_id": "c3",
+        "confident": false,
+        "evidence": "The team also manages subscription renewals and cancellations.",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "vague_entity",
+        "original_term": "The team",
+        "proposal_source": "",
+        "proposed_fix": "",
+        "reason": "Vague reference \"The team\" — which team?"
+      },
+      {
+        "chunk_id": "c4",
+        "confident": false,
+        "evidence": "Agents should use their discretion for amounts between $200-$500.",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "pronoun",
+        "original_term": "their",
+        "proposal_source": "inferred from heading \"Refund Process\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"their\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c6",
+        "confident": false,
+        "evidence": "Enterprise customers may negotiate custom rates with their account manager.",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "pronoun",
+        "original_term": "their",
+        "proposal_source": "inferred from heading \"Payment Processing Times\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"their\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c7",
+        "confident": false,
+        "evidence": "For payment issues contact the team. They can help resolve any problems with transactions.",
+        "fix_detail": "Replaced \"They\" with \"the Enterprise support team\"",
+        "fixed": true,
+        "issue_type": "pronoun",
+        "original_term": "They",
+        "proposal_source": "inferred from heading \"Wire Transfer Details\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"They\" — who/what does it refer to?"
+      },
+      {
+        "chunk_id": "c7",
+        "confident": true,
+        "evidence": "Wire Transfer Details — SWIFT: Value: See diagram below.",
+        "fix_detail": "Expanded to: SWIFT (Society for Worldwide Interbank Financial Telecommunication)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "SWIFT",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "SWIFT (Society for Worldwide Interbank Financial Telecommunication)",
+        "reason": "Acronym \"SWIFT\" not expanded (known: Society for Worldwide Interbank Financial Telecommunication)"
+      },
+      {
+        "chunk_id": "c7",
+        "confident": false,
+        "evidence": "For payment issues contact the team.",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "vague_entity",
+        "original_term": "the team",
+        "proposal_source": "",
+        "proposed_fix": "",
+        "reason": "Vague reference \"the team\" — which team?"
+      },
+      {
+        "chunk_id": "c11",
+        "confident": false,
+        "evidence": "For existing customers who need to update their billing information: 3-step procedure for account se",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "pronoun",
+        "original_term": "their",
+        "proposal_source": "inferred from heading \"Account Setup and Configuration\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"their\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c11",
+        "confident": true,
+        "evidence": "TODO: Add information about SSO configuration and enterprise onboarding process.",
+        "fix_detail": "Expanded to: SSO (Single Sign-On)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "SSO",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "SSO (Single Sign-On)",
+        "reason": "Acronym \"SSO\" not expanded (known: Single Sign-On)"
+      },
+      {
+        "chunk_id": "c12",
+        "confident": true,
+        "evidence": "Enterprise (Custom): Dedicated CSM.",
+        "fix_detail": "Expanded to: CSM (Customer Success Manager)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "CSM",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "CSM (Customer Success Manager)",
+        "reason": "Acronym \"CSM\" not expanded (known: Customer Success Manager)"
+      },
+      {
+        "chunk_id": "c12",
+        "confident": true,
+        "evidence": "Plan Comparison — SLA: Professional ($79/mo): 99.",
+        "fix_detail": "Expanded to: SLA (Service Level Agreement)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "SLA",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "SLA (Service Level Agreement)",
+        "reason": "Acronym \"SLA\" not expanded (known: Service Level Agreement)"
+      },
+      {
+        "chunk_id": "c13",
+        "confident": false,
+        "evidence": "If none of these work contact them and provide your transaction ID.",
+        "fix_detail": "Replaced \"contact them\" with \"contact the Enterprise support team\"",
+        "fixed": true,
+        "issue_type": "pronoun",
+        "original_term": "them",
+        "proposal_source": "inferred from heading \"Troubleshooting Payment Issues\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"them\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c13",
+        "confident": true,
+        "evidence": "For enterprise customers using purchase orders: if your PO is rejected verify that the amount matches the quote exactly.",
+        "fix_detail": "Expanded to: PO (Purchase Order)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "PO",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "PO (Purchase Order)",
+        "reason": "Acronym \"PO\" not expanded (known: Purchase Order)"
+      },
+      {
+        "chunk_id": "c13",
+        "confident": true,
+        "evidence": "The platform will attempt to recharge failed payments up to 3 times over a period of 7 days.",
+        "fix_detail": "Replaced \"The platform\" with \"Enterprise\"",
+        "fixed": true,
+        "issue_type": "vague_entity",
+        "original_term": "The platform",
+        "proposal_source": "A11: company name is Enterprise",
+        "proposed_fix": "Enterprise",
+        "reason": "Vague reference \"The platform\" — which platform?"
+      },
+      {
+        "chunk_id": "c14",
+        "confident": false,
+        "evidence": "Resolution: Contact them.",
+        "fix_detail": "Replaced \"Contact them\" with \"Contact the Enterprise support team\"",
+        "fixed": true,
+        "issue_type": "pronoun",
+        "original_term": "them",
+        "proposal_source": "inferred from heading \"Common Error Codes\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"them\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c14",
+        "confident": true,
+        "evidence": "Common Error Codes — ERR-003: Meaning: Invalid CVV.",
+        "fix_detail": "Expanded to: CVV (Card Verification Value)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "CVV",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "CVV (Card Verification Value)",
+        "reason": "Acronym \"CVV\" not expanded (known: Card Verification Value)"
+      },
+      {
+        "chunk_id": "c15",
+        "confident": false,
+        "evidence": "Customers who are unsatisfied with their service can request a full refund within 30 days of purchas",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "pronoun",
+        "original_term": "their",
+        "proposal_source": "inferred from heading \"Getting a Refund\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"their\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c20",
+        "confident": false,
+        "evidence": "Enterprise: contact sales for custom pricing. These prices are locked in for customers who signed up before March 2022.",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "pronoun",
+        "original_term": "These",
+        "proposal_source": "inferred from heading \"Pricing Update (January 2022)\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"These\" — who/what does it refer to?"
+      },
+      {
+        "chunk_id": "c21",
+        "confident": false,
+        "evidence": "All existing customers will transition to the new pricing at their next renewal date.",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "pronoun",
+        "original_term": "their",
+        "proposal_source": "inferred from heading \"Pricing Update (April 2026)\"",
+        "proposed_fix": "",
+        "reason": "Ambiguous pronoun \"their\" — who does this refer to?"
+      },
+      {
+        "chunk_id": "c23",
+        "confident": true,
+        "evidence": "Contact the DPO at dpo@neuroloft.",
+        "fix_detail": "Expanded to: DPO (Data Protection Officer)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "DPO",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "DPO (Data Protection Officer)",
+        "reason": "Acronym \"DPO\" not expanded (known: Data Protection Officer)"
+      },
+      {
+        "chunk_id": "c25",
+        "confident": true,
+        "evidence": "com/browse/PAY (VPN required).",
+        "fix_detail": "Expanded to: VPN (Virtual Private Network)",
+        "fixed": true,
+        "issue_type": "acronym",
+        "original_term": "VPN",
+        "proposal_source": "A21 acronym dictionary",
+        "proposed_fix": "VPN (Virtual Private Network)",
+        "reason": "Acronym \"VPN\" not expanded (known: Virtual Private Network)"
+      },
+      {
+        "chunk_id": "c25",
+        "confident": true,
+        "evidence": "Duplicate charge on plan upgrade — When customers upgrade mid-cycle, the system may create a duplicate charge.",
+        "fix_detail": "Replaced \"the system\" with \"Enterprise\"",
+        "fixed": true,
+        "issue_type": "vague_entity",
+        "original_term": "the system",
+        "proposal_source": "A11: company name is Enterprise",
+        "proposed_fix": "Enterprise",
+        "reason": "Vague reference \"the system\" — which system?"
+      },
+      {
+        "chunk_id": "c26",
+        "confident": false,
+        "evidence": "As shown in Figure 4, the dispute resolution process has 5 stages: (1) Customer files dispute via support portal or email, (2) Support agent reviews within 4 hours and assigns priority level, (3) If amount exceeds $500, case is escalated to the finance team for review, (4) Resolution is proposed to the customer within 48 hours, (5) If customer accepts, refund or credit is processed within 3 business days.",
+        "fix_detail": "",
+        "fixed": false,
+        "issue_type": "sentence",
+        "original_term": "As shown in Figure 4, the dispute resolution process has 5 stages: (1) Customer files dispute via support portal or email, (2) Support agent reviews within 4 hours and assigns priority level, (3) If amount exceeds $500, case is escalated to the finance team for review, (4) Resolution is proposed to the customer within 48 hours, (5) If customer accepts, refund or credit is processed within 3 business days.",
+        "proposal_source": "",
+        "proposed_fix": "",
+        "reason": "Complex sentence (69 words, max: 40) — consider splitting"
+      }
+    ],
+    "a31": [
+      {
+        "chunk_id": "c1",
+        "confidence": "high",
+        "detector": "vague_claim",
+        "evidence": "the billing team will review the case and take appropriate action.",
+        "reason": "Vague claim: \"take appropriate action\"",
+        "tag": "vague_claim"
+      },
+      {
+        "chunk_id": "c4",
+        "confidence": "high",
+        "detector": "internal_note",
+        "evidence": "INTERNAL NOTE: The refund approval threshold was raised to $500 in Q3.",
+        "reason": "Internal marker found: \"INTERNAL NOTE\"",
+        "tag": "internal_only"
+      },
+      {
+        "chunk_id": "c4",
+        "confidence": "high",
+        "detector": "internal_note",
+        "evidence": "Do not share this with customers.",
+        "reason": "Internal marker found: \"Do not share\"",
+        "tag": "internal_only"
+      },
+      {
+        "chunk_id": "c4",
+        "confidence": "high",
+        "detector": "internal_note",
+        "evidence": "Agents should use their discretion for amounts between $200-$500.",
+        "reason": "Internal marker found: \"Agents should\"",
+        "tag": "internal_only"
+      },
+      {
+        "chunk_id": "c6",
+        "confidence": "high",
+        "detector": "escalation_no_details",
+        "evidence": "For any issues with payment processing contact support.",
+        "reason": "Escalation without contact details: \"contact support\"",
+        "tag": "escalation"
+      },
+      {
+        "chunk_id": "c7",
+        "confidence": "high",
+        "detector": "pii_financial",
+        "evidence": "Wire Transfer Details — Account: Value: 7281930456.",
+        "reason": "Financial account number: 7281930456",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c7",
+        "confidence": "high",
+        "detector": "escalation_no_details",
+        "evidence": "For payment issues contact the team.",
+        "reason": "Escalation without contact details: \"contact the team\"",
+        "tag": "escalation"
+      },
+      {
+        "chunk_id": "c7",
+        "confidence": "high",
+        "detector": "escalation_no_details",
+        "evidence": "If the issue is not resolved within 48 hours escalate to management.",
+        "reason": "Escalation without contact details: \"escalate to management\"",
+        "tag": "escalation"
+      },
+      {
+        "chunk_id": "c11",
+        "confidence": "high",
+        "detector": "placeholder",
+        "evidence": "TODO: Add information about SSO (Single Sign-On) configuration and enterprise onboarding process.",
+        "reason": "Placeholder found: \"TODO\"",
+        "tag": "placeholder"
+      },
+      {
+        "chunk_id": "c11",
+        "confidence": "high",
+        "detector": "escalation_no_details",
+        "evidence": "For immediate changes contact support.",
+        "reason": "Escalation without contact details: \"contact support\"",
+        "tag": "escalation"
+      },
+      {
+        "chunk_id": "c12",
+        "confidence": "high",
+        "detector": "broken_reference",
+        "evidence": "See our FAQ page for complete plan comparisons and feature lists.",
+        "reason": "Broken reference: \"See our FAQ\"",
+        "tag": "broken_reference"
+      },
+      {
+        "chunk_id": "c13",
+        "confidence": "high",
+        "detector": "placeholder",
+        "evidence": "TBD - Add section about payment webhooks and API integration for developers.",
+        "reason": "Placeholder found: \"TBD\"",
+        "tag": "placeholder"
+      },
+      {
+        "chunk_id": "c13",
+        "confidence": "high",
+        "detector": "vague_claim",
+        "evidence": "Our system automatically handles most edge cases and retry scenarios.",
+        "reason": "Vague claim: \"automatically handles\"",
+        "tag": "vague_claim"
+      },
+      {
+        "chunk_id": "c13",
+        "confidence": "high",
+        "detector": "escalation_no_details",
+        "evidence": "Contact your account manager or escalate to the appropriate team for resolution.",
+        "reason": "Escalation without contact details: \"escalate to the appropriate team\"",
+        "tag": "escalation"
+      },
+      {
+        "chunk_id": "c16",
+        "confidence": "high",
+        "detector": "broken_reference",
+        "evidence": "[Figure 5: Account Tier Comparison Chart - image not available] As shown in Figure 5, the three account tiers (Starter, Professional, Enterprise) diff",
+        "reason": "Broken reference: \"[Figure 5: Account Tier Comparison Chart - image not availab\"",
+        "tag": "broken_reference"
+      },
+      {
+        "chunk_id": "c17",
+        "confidence": "high",
+        "detector": "broken_reference",
+        "evidence": "Figure 5: Account Tier Comparison Chart - image not available.",
+        "reason": "Broken reference: \"image not available\"",
+        "tag": "broken_reference"
+      },
+      {
+        "chunk_id": "c17",
+        "confidence": "high",
+        "detector": "broken_reference",
+        "evidence": "(Note: original image not available.",
+        "reason": "Broken reference: \"image not available\"",
+        "tag": "broken_reference"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_email",
+        "evidence": "sarah.johnson@acmecorp.com",
+        "reason": "Personal email address: sarah.johnson@acmecorp.com",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_email",
+        "evidence": "m.chen@techstart.io",
+        "reason": "Personal email address: m.chen@techstart.io",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_email",
+        "evidence": "lisa.r@globalinc.com",
+        "reason": "Personal email address: lisa.r@globalinc.com",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_name",
+        "evidence": "Recent Support Cases — CASE-4521: Customer: Sarah Johnson (sarah.",
+        "reason": "Person name: Sarah Johnson",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_name",
+        "evidence": "Recent Support Cases — CASE-4533: Customer: Michael Chen (m.",
+        "reason": "Person name: Michael Chen",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_name",
+        "evidence": "Recent Support Cases — CASE-4547: Customer: Lisa Rodriguez (lisa.",
+        "reason": "Person name: Lisa Rodriguez",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_name_email",
+        "evidence": "Recent Support Cases — CASE-4521: Customer: Sarah Johnson (sarah.johnson@acmecorp.",
+        "reason": "Person name with email: Sarah Johnson",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_name_email",
+        "evidence": "Recent Support Cases — CASE-4533: Customer: Michael Chen (m.chen@techstart.",
+        "reason": "Person name with email: Michael Chen",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c23",
+        "confidence": "high",
+        "detector": "pii_name_email",
+        "evidence": "Recent Support Cases — CASE-4547: Customer: Lisa Rodriguez (lisa.r@globalinc.",
+        "reason": "Person name with email: Lisa Rodriguez",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c24",
+        "confidence": "high",
+        "detector": "editorial_tracked_change",
+        "evidence": "[TRACKED CHANGE - Dave 03/15: Changed from 30 days to 15 days per finance request]",
+        "reason": "Tracked change marker: [TRACKED CHANGE - Dave 03/15: Changed from 30 days to 15 day",
+        "tag": "editorial"
+      },
+      {
+        "chunk_id": "c24",
+        "confidence": "high",
+        "detector": "editorial_draft_marker",
+        "evidence": "DRAFT v3",
+        "reason": "Draft/review marker: DRAFT v3",
+        "tag": "editorial"
+      },
+      {
+        "chunk_id": "c24",
+        "confidence": "high",
+        "detector": "editorial_draft_marker",
+        "evidence": "Pending legal review",
+        "reason": "Draft/review marker: Pending legal review",
+        "tag": "editorial"
+      },
+      {
+        "chunk_id": "c24",
+        "confidence": "high",
+        "detector": "editorial_revision_note",
+        "evidence": "Last edited by Dave",
+        "reason": "Revision note with author: Last edited by Dave",
+        "tag": "editorial"
+      },
+      {
+        "chunk_id": "c24",
+        "confidence": "high",
+        "detector": "editorial_revision_note",
+        "evidence": "Previous version by Sarah",
+        "reason": "Revision note with author: Previous version by Sarah",
+        "tag": "editorial"
+      },
+      {
+        "chunk_id": "c24",
+        "confidence": "high",
+        "detector": "editorial_strikethrough",
+        "evidence": "~~Monthly plans no longer receive loyalty discounts.~~",
+        "reason": "Strikethrough text (deleted content): ~~Monthly plans no longer receive loyalty discounts.~~",
+        "tag": "editorial"
+      },
+      {
+        "chunk_id": "c25",
+        "confidence": "high",
+        "detector": "metadata_jira_id",
+        "evidence": "JIRA-7823",
+        "reason": "Internal ticket ID: JIRA-7823",
+        "tag": "metadata_leak"
+      },
+      {
+        "chunk_id": "c25",
+        "confidence": "high",
+        "detector": "metadata_internal_url",
+        "evidence": "https://grafana.internal.neuroloft.com/d/billing-errors",
+        "reason": "Internal URL: https://grafana.internal.neuroloft.com/d/billing-errors",
+        "tag": "metadata_leak"
+      },
+      {
+        "chunk_id": "c25",
+        "confidence": "high",
+        "detector": "metadata_internal_url",
+        "evidence": "https://jira.internal.neuroloft.com/browse/PAY",
+        "reason": "Internal URL: https://jira.internal.neuroloft.com/browse/PAY",
+        "tag": "metadata_leak"
+      },
+      {
+        "chunk_id": "c25",
+        "confidence": "high",
+        "detector": "metadata_admin_url",
+        "evidence": "https://admin.neuroloft.com/billing/debug",
+        "reason": "Admin/debug URL: https://admin.neuroloft.com/billing/debug",
+        "tag": "metadata_leak"
+      },
+      {
+        "chunk_id": "c25",
+        "confidence": "high",
+        "detector": "metadata_debug_url",
+        "evidence": "https://admin.neuroloft.com/billing/debug?mode=verbose",
+        "reason": "URL with debug parameters: https://admin.neuroloft.com/billing/debug?mode=verbose",
+        "tag": "metadata_leak"
+      },
+      {
+        "chunk_id": "c25",
+        "confidence": "high",
+        "detector": "metadata_slack_channel",
+        "evidence": "#billing-ops-2026-03-12",
+        "reason": "Slack channel/thread reference: #billing-ops-2026-03-12",
+        "tag": "metadata_leak"
+      },
+      {
+        "chunk_id": "c25",
+        "confidence": "high",
+        "detector": "metadata_build_number",
+        "evidence": "build neuroloft-billing-v4.2.1-rc3",
+        "reason": "Internal build/release number: build neuroloft-billing-v4.2.1-rc3",
+        "tag": "metadata_leak"
+      },
+      {
+        "chunk_id": "c25",
+        "confidence": "high",
+        "detector": "metadata_sprint_ref",
+        "evidence": "Sprint 47",
+        "reason": "Sprint reference: Sprint 47",
+        "tag": "metadata_leak"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "internal_note",
+        "evidence": "FOR INTERNAL USE ONLY — Do not share with customers .",
+        "reason": "Internal marker found: \"FOR INTERNAL USE ONLY\"",
+        "tag": "internal_only"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "internal_note",
+        "evidence": "FOR INTERNAL USE ONLY — Do not share with customers .",
+        "reason": "Internal marker found: \"Do not share with customers\"",
+        "tag": "internal_only"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "pii_email",
+        "evidence": "j.park@neuroloft.com",
+        "reason": "Personal email address: j.park@neuroloft.com",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "pii_email",
+        "evidence": "r.williams@neuroloft.com",
+        "reason": "Personal email address: r.williams@neuroloft.com",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "pii_email",
+        "evidence": "a.foster@neuroloft.com",
+        "reason": "Personal email address: a.foster@neuroloft.com",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "pii_name",
+        "evidence": "Escalation Contacts — L1 - Support Lead: Contact: Jennifer Park.",
+        "reason": "Person name: Jennifer Park",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "pii_name",
+        "evidence": "Escalation Contacts — L2 - Finance Manager: Contact: Robert Williams.",
+        "reason": "Person name: Robert Williams",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "pii_name",
+        "evidence": "Escalation Contacts — L3 - VP Operations: Contact: Amanda Foster.",
+        "reason": "Person name: Amanda Foster",
+        "tag": "pii"
+      },
+      {
+        "chunk_id": "c27",
+        "confidence": "high",
+        "detector": "metadata_slack_channel",
+        "evidence": "#escalations-billing",
+        "reason": "Slack channel/thread reference: #escalations-billing",
+        "tag": "metadata_leak"
+      }
+    ],
+    "a32": [
+      {
+        "action_taken": "flagged_for_review",
+        "chunk_a_id": "c10",
+        "chunk_b_id": "c11",
+        "confidence": "low",
+        "confidence_score": 0.0,
+        "conflict_type": "process",
+        "evidence_a": "3 steps starting: Visit neuroloft",
+        "evidence_b": "3 steps starting: Go to Settings &gt; Billing",
+        "finding_id": "c10__c11_process",
+        "rationale": "Same topic, different procedure steps",
+        "signals": [],
+        "suggested_winner": "",
+        "suggestion_reason": "",
+        "user_decision": "pending"
+      },
+      {
+        "action_taken": "flagged_for_review",
+        "chunk_a_id": "c20",
+        "chunk_b_id": "c21",
+        "confidence": "medium",
+        "confidence_score": 0.4,
+        "conflict_type": "numeric",
+        "evidence_a": "Effective January 15, 2022 , the following pricing changes apply to all new customers: Starter plan: $19/month (reduced from $25). Professional plan: $59/month (reduced from $69). Enterprise: contact ",
+        "evidence_b": "As of April 1, 2026 , Neuroloft pricing has been updated: Starter plan: $29/month (includes 5 users, 10 GB). Professional plan: $79/month (includes 25 users, 100 GB). Enterprise: custom pricing based ",
+        "finding_id": "c20__c21_numeric",
+        "rationale": "\"19 $/mo\" vs \"29 $/mo\" for similar context",
+        "signals": [
+          {
+            "signal": "freshness",
+            "value": 0.3,
+            "detail": "Chunk B mentions newer date (April 1, 2026 vs March 2022)"
+          },
+          {
+            "signal": "context_overlap",
+            "value": 0.1,
+            "detail": "2 shared context words"
+          }
+        ],
+        "suggested_winner": "b",
+        "suggestion_reason": "Chunk B mentions newer date (April 1, 2026 vs March 2022)",
+        "user_decision": "pending"
+      }
+    ]
+  },
+  "domain_context": {
+    "domain_type": "support",
+    "company_name": "Enterprise",
+    "actors": {
+      "support": "support",
+      "billing": "billing",
+      "finance": "finance",
+      "agent": "agent"
+    },
+    "acronyms": {
+      "CRM": "Customer Relationship Management",
+      "SLA": "Service Level Agreement",
+      "SWIFT": "Society for Worldwide Interbank Financial Telecommunication",
+      "SSO": "Single Sign-On",
+      "CSM": "Customer Success Manager",
+      "PO": "Purchase Order",
+      "CVV": "Card Verification Value",
+      "DPO": "Data Protection Officer",
+      "VPN": "Virtual Private Network"
+    },
+    "products": [
+      "Enterprise",
+      "Professional",
+      "Starter"
+    ]
+  }
+}

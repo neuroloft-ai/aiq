@@ -538,6 +538,7 @@ class Pipeline:
                 for chunk in rechunk_out.chunks:
                     chunk.source_page_id = first_meta.get("source_page_id", "")
                     chunk.source_page_title = first_meta.get("source_page_title", "")
+                    chunk.metadata.update(first_meta.get("metadata", {}))
 
             all_pipeline_chunks = rechunk_out.chunks
 

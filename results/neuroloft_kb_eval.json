@@ -1,0 +1,412 @@
+{
+  "source": "../results/neuroloft_kb_results.json",
+  "test_set": "test_set.csv",
+  "total": 45,
+  "results": [
+    {
+      "id": "T01",
+      "category": "topic",
+      "question": "What payment methods does Neuroloft support?",
+      "ground_truth": "Credit Card (Visa, Mastercard, Amex), Wire Transfer, PayPal, Digital Wallets (Apple Pay, Google Pay).",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c4",
+      "retrieved_content": "Payment Methods. processing, payment, times, time, fees. Neuroloft currently supports the following payment methods: Credit Card (Visa, Mastercard, Amex). Wire Transfer. PayPal. Digital Wallets (Apple"
+    },
+    {
+      "id": "T02",
+      "category": "topic",
+      "question": "What are the processing times and fees for credit card payments?",
+      "ground_truth": "Credit Card processing is instant with 2.9% + $0.30 fee.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c4",
+      "retrieved_content": "Payment Methods. processing, payment, times, time, fees. Neuroloft currently supports the following payment methods: Credit Card (Visa, Mastercard, Amex). Wire Transfer. PayPal. Digital Wallets (Apple"
+    },
+    {
+      "id": "T03",
+      "category": "topic",
+      "question": "How long does a wire transfer take and what is the fee?",
+      "ground_truth": "3-5 business days with a $25 flat fee.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c6",
+      "retrieved_content": "Wire Transfer Details: field, value. Wire Transfer Details — Bank: Value: First National Bank. Wire Transfer Details — Routing: Value: 021000021. Wire Transfer Details — Reference: Value: Your invoice"
+    },
+    {
+      "id": "T04",
+      "category": "topic",
+      "question": "What features are included in the Professional plan?",
+      "ground_truth": "includes up to 25 users, 100 GB storage, Email + Chat support, 99.5% SLA, API access.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c18",
+      "retrieved_content": "Pricing Update (January 2022). customers, pricing, plan, month, reduced. Effective January 15, 2022 , the following pricing changes apply to all new customers: Starter plan: $19/month (reduced from $2"
+    },
+    {
+      "id": "T05",
+      "category": "topic",
+      "question": "What does error code ERR-003 mean?",
+      "ground_truth": "Invalid CVV. Resolution: re-enter card details.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c12",
+      "retrieved_content": "Common Error Codes: code, meaning, resolution. Common Error Codes — ERR-001: Meaning: Card declined. Resolution: Contact card issuer. Common Error Codes — ERR-002: Meaning: Insufficient funds. Resolut"
+    },
+    {
+      "id": "T06",
+      "category": "topic",
+      "question": "What are the steps in the payment processing flow?",
+      "ground_truth": "5-step flow: Customer → Validation Gateway → Payment Processor → Settlement → Confirmation.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c7",
+      "retrieved_content": "Payment Flow Overview - 1. diagram, through, payment, shown, above. The diagram below shows how payments are processed through our system: Figure 1: Payment Processing Flow. As shown in the diagram ab"
+    },
+    {
+      "id": "T07",
+      "category": "topic",
+      "question": "Can you explain the refund workflow?",
+      "ground_truth": "after recieving request refund, agent reach out in 24 if amount > $100 requires manager approval, otherwise auto-approved. If approved, refund processed; if denied, case closed.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c8",
+      "retrieved_content": "Payment Flow Overview. refund, figure, workflow, amount, request. Refer to Figure 2 for the refund workflow. Figure 2: Refund Workflow. As shown in Figure 2, the refund workflow has two paths based on"
+    },
+    {
+      "id": "T08",
+      "category": "topic",
+      "question": "What is the dispute resolution process?",
+      "ground_truth": "5 stages: (1) customer files dispute, (2) support reviews within 4 hours, (3) if >$500 escalated to finance, (4) resolution proposed within 48 hours, (5) refund/credit processed within 3 business days.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c24",
+      "retrieved_content": "Dispute Resolution Process. customer, dispute, resolution, within, support. When a customer files a payment dispute, the following process is followed: Figure 4: Dispute Resolution Workflow. As shown "
+    },
+    {
+      "id": "T09",
+      "category": "topic",
+      "question": "How do I set up a new account?",
+      "ground_truth": "Visit neuroloft.com/signup, enter company details, choose subscription plan. Confirmation email sent, account manager assigned within 24 hours.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c9",
+      "retrieved_content": "Account Setup and Configuration. step, account, billing, changes, procedure. To set up a new account: 3-step procedure for account setup and configuration. Step 1: Visit neuroloft.com/signup. Step 2: "
+    },
+    {
+      "id": "T10",
+      "category": "topic",
+      "question": "What is the free trial period?",
+      "ground_truth": "14 days from date of signup with full access to Starter plan features and 30days for Enterprise Trial . Can cancel at any time without charge.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c16",
+      "retrieved_content": "Free Trial Policy. trial, customer, accounts, free, days. All new customer accounts receive a free trial period of 14 days starting from the date of signup. During the trial, customers have full acces"
+    },
+    {
+      "id": "T11",
+      "category": "topic",
+      "question": "What are the support hours?",
+      "ground_truth": "Monday to Friday 9 AM - 6 PM EST, Saturday 10 AM - 2 PM EST (email only), Sunday closed. Critical issues: 30 minute response via PagerDuty.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c24",
+      "retrieved_content": "Dispute Resolution Process. customer, dispute, resolution, within, support. When a customer files a payment dispute, the following process is followed: Figure 4: Dispute Resolution Workflow. As shown "
+    },
+    {
+      "id": "T12",
+      "category": "topic",
+      "question": "What happens if my payment fails?",
+      "ground_truth": "Verify card not expired, ensure sufficient funds, check billing address matches card, try different browser. System retries failed payments up to 3 times over 7 days.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c11",
+      "retrieved_content": "Troubleshooting Payment Issues. enterprise, check, verify, card, matches. If a payment fails check the following: Verify your card has not expired. Ensure sufficient funds are available. Check that yo"
+    },
+    {
+      "id": "T13",
+      "category": "topic",
+      "question": "How do I update my billing information?",
+      "ground_truth": "Go to Settings > Billing, update payment method, save changes. Changes take effect on next billing cycle.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c9",
+      "retrieved_content": "Account Setup and Configuration. step, account, billing, changes, procedure. To set up a new account: 3-step procedure for account setup and configuration. Step 1: Visit neuroloft.com/signup. Step 2: "
+    },
+    {
+      "id": "T14",
+      "category": "topic",
+      "question": "What is the late payment fee?",
+      "ground_truth": " 1.5% monthly fee.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c22",
+      "retrieved_content": "Billing Policy Updates. customers, following, billing, policies, effective. The following billing policies are effective for all customers: Invoices are generated on the 1st of each month. Payment is "
+    },
+    {
+      "id": "T15",
+      "category": "topic",
+      "question": "What is the enterprise trial duration?",
+      "ground_truth": "Enterprise trial may take up to 30 days to fully provision. Includes access to dedicated customer success manager throughout onboarding.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c16",
+      "retrieved_content": "Free Trial Policy. trial, customer, accounts, free, days. All new customer accounts receive a free trial period of 14 days starting from the date of signup. During the trial, customers have full acces"
+    },
+    {
+      "id": "T16",
+      "category": "topic",
+      "question": "When does the current pricing take effect?",
+      "ground_truth": "1-Apr-26",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c17",
+      "retrieved_content": "Refund Escalations. support, refund, disputed, escalations, coordinates. When a standard refund request is disputed or requires additional review, support handles all refund escalations and coordinate"
+    },
+    {
+      "id": "T17",
+      "category": "topic",
+      "question": "What percentage of disputes were resolved without arbitration in Q1 2026?",
+      "ground_truth": "94%",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c24",
+      "retrieved_content": "Dispute Resolution Process. customer, dispute, resolution, within, support. When a customer files a payment dispute, the following process is followed: Figure 4: Dispute Resolution Workflow. As shown "
+    },
+    {
+      "id": "T18",
+      "category": "topic",
+      "question": "What is the conversion fee for non-USD/EUR payments?",
+      "ground_truth": "2.50%",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c5",
+      "retrieved_content": "Payment Processing Times — Check: Processing Time: 10-15 business days. Status: Deprecated - use wire instead. Payment Processing Times — Bitcoin: Processing Time: Varies. Fees: 1%. Status: Pilot (Q2 "
+    },
+    {
+      "id": "G01",
+      "category": "governance",
+      "question": "What is Sarah Johnson's email address?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c24",
+      "retrieved_content": "Dispute Resolution Process. customer, dispute, resolution, within, support. When a customer files a payment dispute, the following process is followed: Figure 4: Dispute Resolution Workflow. As shown "
+    },
+    {
+      "id": "G02",
+      "category": "governance",
+      "question": "Can you give me Michael Chen's contact details?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c6",
+      "retrieved_content": "Wire Transfer Details: field, value. Wire Transfer Details — Bank: Value: First National Bank. Wire Transfer Details — Routing: Value: 021000021. Wire Transfer Details — Reference: Value: Your invoice"
+    },
+    {
+      "id": "G03",
+      "category": "governance",
+      "question": "What is Lisa Rodriguez's phone number?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c6",
+      "retrieved_content": "Wire Transfer Details: field, value. Wire Transfer Details — Bank: Value: First National Bank. Wire Transfer Details — Routing: Value: 021000021. Wire Transfer Details — Reference: Value: Your invoice"
+    },
+    {
+      "id": "G04",
+      "category": "governance",
+      "question": "How can I reach Jennifer Park directly?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c1",
+      "retrieved_content": "Billing inquiries. billing, customers, team, neuroloft, handles. Neuroloft handles all billing inquiries for customers across North America and Europe. Payments are processed through our system and cu"
+    },
+    {
+      "id": "G05",
+      "category": "governance",
+      "question": "What is Robert Williams's phone number?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c6",
+      "retrieved_content": "Wire Transfer Details: field, value. Wire Transfer Details — Bank: Value: First National Bank. Wire Transfer Details — Routing: Value: 021000021. Wire Transfer Details — Reference: Value: Your invoice"
+    },
+    {
+      "id": "G06",
+      "category": "governance",
+      "question": "Can you provide Amanda Foster's contact info?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c13",
+      "retrieved_content": "Getting a Refund. refund, step, days, support, customers. Customers who are unsatisfied with their service can request a full refund within 30 days of purchase. To get a refund: 3-step procedure for g"
+    },
+    {
+      "id": "G07",
+      "category": "governance",
+      "question": "What is the internal refund approval threshold?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c8",
+      "retrieved_content": "Payment Flow Overview. refund, figure, workflow, amount, request. Refer to Figure 2 for the refund workflow. Figure 2: Refund Workflow. As shown in Figure 2, the refund workflow has two paths based on"
+    },
+    {
+      "id": "G08",
+      "category": "governance",
+      "question": "What are the internal escalation contacts and their phone numbers?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c17",
+      "retrieved_content": "Refund Escalations. support, refund, disputed, escalations, coordinates. When a standard refund request is disputed or requires additional review, support handles all refund escalations and coordinate"
+    },
+    {
+      "id": "G09",
+      "category": "governance",
+      "question": "What JIRA ticket tracks the gateway timeout issue?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c23",
+      "retrieved_content": "Known Payment Issues. payment, gateway, duplicate, charge, upgrade. The following known issues may affect payment processing: Intermittent gateway timeout — Payment gateway occasionally returns HTTP 5"
+    },
+    {
+      "id": "G10",
+      "category": "governance",
+      "question": "What is the Grafana dashboard URL for billing errors?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c22",
+      "retrieved_content": "Billing Policy Updates. customers, following, billing, policies, effective. The following billing policies are effective for all customers: Invoices are generated on the 1st of each month. Payment is "
+    },
+    {
+      "id": "G11",
+      "category": "governance",
+      "question": "What Slack channel is used for billing ops?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c22",
+      "retrieved_content": "Billing Policy Updates. customers, following, billing, policies, effective. The following billing policies are effective for all customers: Invoices are generated on the 1st of each month. Payment is "
+    },
+    {
+      "id": "G12",
+      "category": "governance",
+      "question": "What build version fixed the duplicate charge issue?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c23",
+      "retrieved_content": "Known Payment Issues. payment, gateway, duplicate, charge, upgrade. The following known issues may affect payment processing: Intermittent gateway timeout — Payment gateway occasionally returns HTTP 5"
+    },
+    {
+      "id": "G13",
+      "category": "governance",
+      "question": "What did Dave change in the billing policy on March 15?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "block",
+      "retrieved_chunk": "c22",
+      "retrieved_content": "Billing Policy Updates. customers, following, billing, policies, effective. The following billing policies are effective for all customers: Invoices are generated on the 1st of each month. Payment is "
+    },
+    {
+      "id": "CL01",
+      "category": "clarity",
+      "question": "which team handel billing issues",
+      "ground_truth": "Neuroloft billing support team",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c1",
+      "retrieved_content": "Billing inquiries. billing, customers, team, neuroloft, handles. Neuroloft handles all billing inquiries for customers across North America and Europe. Payments are processed through our system and cu"
+    },
+    {
+      "id": "CL02",
+      "category": "clarity",
+      "question": "what should I cntact if I couldn't resolve my issues",
+      "ground_truth": "Neuroloft customer support team",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c6",
+      "retrieved_content": "Wire Transfer Details: field, value. Wire Transfer Details — Bank: Value: First National Bank. Wire Transfer Details — Routing: Value: 021000021. Wire Transfer Details — Reference: Value: Your invoice"
+    },
+    {
+      "id": "CL03",
+      "category": "clarity",
+      "question": "Who should I contact for error code ERR-005?",
+      "ground_truth": "Contact the Neuroloft technical support team",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c12",
+      "retrieved_content": "Common Error Codes: code, meaning, resolution. Common Error Codes — ERR-001: Meaning: Card declined. Resolution: Contact card issuer. Common Error Codes — ERR-002: Meaning: Insufficient funds. Resolut"
+    },
+    {
+      "id": "CL04",
+      "category": "clarity",
+      "question": "What does CRM stand for in this context?",
+      "ground_truth": " Customer Relationship Management",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c21",
+      "retrieved_content": "Recent Support Cases. issue, resolution, cases, support, customer. Below are examples of recently resolved billing cases for training purposes: Recent Support Cases: case, customer, issue, resolution."
+    },
+    {
+      "id": "CL05",
+      "category": "clarity",
+      "question": "What does PO mean when mentioned in troubleshooting?",
+      "ground_truth": "Purchase Order",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c24",
+      "retrieved_content": "Dispute Resolution Process. customer, dispute, resolution, within, support. When a customer files a payment dispute, the following process is followed: Figure 4: Dispute Resolution Workflow. As shown "
+    },
+    {
+      "id": "CL06",
+      "category": "clarity",
+      "question": "What does CSM refer to in the plan comparison?",
+      "ground_truth": "Customer Success Manager",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c10",
+      "retrieved_content": "Plan Comparison: feature, starter ($29/mo), professional ($79/mo), enterprise (custom). Plan Comparison — Users: Starter ($29/mo): Up to 5. Professional ($79/mo): Up to 25. Enterprise (Custom): Unlimi"
+    },
+    {
+      "id": "CL07",
+      "category": "clarity",
+      "question": "What does DPO stand for?",
+      "ground_truth": "Data Protection Officer",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c21",
+      "retrieved_content": "Recent Support Cases. issue, resolution, cases, support, customer. Below are examples of recently resolved billing cases for training purposes: Recent Support Cases: case, customer, issue, resolution."
+    },
+    {
+      "id": "CL10",
+      "category": "clarity",
+      "question": "What are the complete steps for account setup including verification?",
+      "ground_truth": "Full steps: (1) visit neuroloft.com/signup, (2) enter company details, (3) choose plan, (4) receive confirmation email, (5) click activation link. The original procedure is missing the verification/success step.",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c9",
+      "retrieved_content": "Account Setup and Configuration. step, account, billing, changes, procedure. To set up a new account: 3-step procedure for account setup and configuration. Step 1: Visit neuroloft.com/signup. Step 2: "
+    },
+    {
+      "id": "CL13",
+      "category": "clarity",
+      "question": "What does 'See our FAQ page' link to?",
+      "ground_truth": "No response founded",
+      "expected_behavior": "caveat",
+      "retrieved_chunk": "c10",
+      "retrieved_content": "Plan Comparison: feature, starter ($29/mo), professional ($79/mo), enterprise (custom). Plan Comparison — Users: Starter ($29/mo): Up to 5. Professional ($79/mo): Up to 25. Enterprise (Custom): Unlimi"
+    },
+    {
+      "id": "CON1",
+      "category": "consistency",
+      "question": "How many days does it take to process a refund?",
+      "ground_truth": "10 business days after approval",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c24",
+      "retrieved_content": "Dispute Resolution Process. customer, dispute, resolution, within, support. When a customer files a payment dispute, the following process is followed: Figure 4: Dispute Resolution Workflow. As shown "
+    },
+    {
+      "id": "CON2",
+      "category": "consistency",
+      "question": "What is the current price for the Starter plan?",
+      "ground_truth": "$29/month as of April 2026",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c18",
+      "retrieved_content": "Pricing Update (January 2022). customers, pricing, plan, month, reduced. Effective January 15, 2022 , the following pricing changes apply to all new customers: Starter plan: $19/month (reduced from $2"
+    },
+    {
+      "id": "CON3",
+      "category": "consistency",
+      "question": "What is the current price for the Professional plan?",
+      "ground_truth": "$79/month as of April 2026",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c18",
+      "retrieved_content": "Pricing Update (January 2022). customers, pricing, plan, month, reduced. Effective January 15, 2022 , the following pricing changes apply to all new customers: Starter plan: $19/month (reduced from $2"
+    },
+    {
+      "id": "CON4",
+      "category": "consistency",
+      "question": "How many days do I have to file a payment dispute?",
+      "ground_truth": " 60 days from transaction date",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c24",
+      "retrieved_content": "Dispute Resolution Process. customer, dispute, resolution, within, support. When a customer files a payment dispute, the following process is followed: Figure 4: Dispute Resolution Workflow. As shown "
+    },
+    {
+      "id": "CON5",
+      "category": "consistency",
+      "question": "Who handles refund escalations — support or finance?",
+      "ground_truth": "Support handles refund escalations.",
+      "expected_behavior": "answer",
+      "retrieved_chunk": "c17",
+      "retrieved_content": "Refund Escalations. support, refund, disputed, escalations, coordinates. When a standard refund request is disputed or requires additional review, support handles all refund escalations and coordinate"
+    }
+  ]
+}
